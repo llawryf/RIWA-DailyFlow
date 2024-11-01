@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Daily Flow
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
@@ -55,16 +55,16 @@ defineOptions({
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: 'Naslovna',
+    caption: 'početna stranica',
+    icon: 'home',
+    link: '#'
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Pretraživanje',
+    caption: 'pretraživanje recepata',
+    icon: 'search',
+    link: '#/pretraga_recepata'
   },
   {
     title: 'Discord Chat Channel',
