@@ -67,16 +67,16 @@ const linksList = [
     link: '#/pretraga_recepata'
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: 'Login',
+    caption: 'Prijava',
+    icon: 'record_voice_over',
+    link: '#/login'
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
+    title: 'Register',
+    caption: 'Registracija',
     icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    link: '#/register'
   },
   {
     title: 'Twitter',
