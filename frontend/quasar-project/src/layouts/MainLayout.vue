@@ -79,22 +79,22 @@ const linksList = [
     link: '#/register'
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
+    title: 'Profil',
+    caption: 'Otvori moj profil',
     icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
+    link: '#/profil'
   },
   {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
+    title: 'Spremljeni recepti',
+    caption: 'Pregled spremljenih recepata',
     icon: 'public',
-    link: 'https://facebook.quasar.dev'
+    link: '#/spremljeni_recepti'
   },
   {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
+    title: 'Izrada recepta',
+    caption: 'Izradi svoj recept',
     icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+    link: '#/izrada_recepta'
   }
 ]
 

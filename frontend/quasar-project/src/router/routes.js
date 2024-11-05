@@ -7,6 +7,9 @@ const routes = [
       { path: '/pretraga_recepata', component: () => import('pages/pretragaRecepataPage.vue') },
       { path: '/login', component: () => import('pages/LoginPage.vue') },
       { path: '/register', component: () => import('pages/RegisterPage.vue') },
+      { path: '/profil', component: () => import('pages/ProfilPage.vue') },
+      { path: '/spremljeni_recepti', component: () => import('pages/SpremljeniReceptiPage.vue') },
+      { path: '/izrada_recepta', component: () => import('pages/IzradaReceptaPage.vue') },
     ]
   },
 
