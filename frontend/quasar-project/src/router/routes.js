@@ -10,6 +10,7 @@ const routes = [
       { path: '/profil', component: () => import('pages/ProfilPage.vue') },
       { path: '/spremljeni_recepti', component: () => import('pages/SpremljeniReceptiPage.vue') },
       { path: '/izrada_recepta', component: () => import('pages/IzradaReceptaPage.vue') },
+      { path: '/pretraga_korisnika', component: () => import('pages/PretragaKorisnika.vue') },
     ]
   },
 

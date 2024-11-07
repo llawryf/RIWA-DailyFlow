@@ -95,6 +95,12 @@ const linksList = [
     caption: 'Izradi svoj recept',
     icon: 'favorite',
     link: '#/izrada_recepta'
+  },
+  {
+    title: 'Pretraga korisnika',
+    caption: 'Pretraži korisnike',
+    icon: 'record_voice_over',
+    link: '#/pretraga_korisnika'
   }
 ]
 
