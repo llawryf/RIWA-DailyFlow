@@ -13,6 +13,16 @@ const routes = [
       { path: '/pretraga_korisnika', component: () => import('pages/PretragaKorisnika.vue') },
     ]
   },
+  {
+    path: '/admin',
+    component: () => import('layouts/AdminLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/AdminPage.vue') },
+      { path: '/admin/recepti', component: () => import('pages/RecipeManagement.vue') },
+      { path: '/admin/korisnici', component: () => import('pages/UserManagement.vue') },
+      { path: '/admin/logout', component: () => import('pages/LogoutPage.vue') },
+    ]
+  },
 
   // Always leave this as last one,
   // but you can also remove it
