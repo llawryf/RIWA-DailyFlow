@@ -48,12 +48,14 @@ connection.connect(function(err) {
        
      });
 
-/*
-  app.get("/api/knjige/:id", (req, res) => {
-    const id= req.params.id;
-  //  res.send("jedna knjiga "+id);
-  });*/
 
+  app.get("/api/PetragaKorisnika/", (req, res) => {
+    connection.query("SELECT userId, username FROM User",(error, results) => {
+      if (error) throw error;
+      res.send(results);
+    });
+    
+  });
   app.post("/api/unos_knjige", (req, res) => {
     const data = req.body;
     knjiga = [[data.naslov,data.autor, data.opis,data.stanje,data.slika]]
