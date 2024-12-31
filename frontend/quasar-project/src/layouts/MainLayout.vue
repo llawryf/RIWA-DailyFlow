@@ -69,37 +69,37 @@ const linksList = [
   {
     title: 'Login',
     caption: 'Prijava',
-    icon: 'record_voice_over',
+    icon: 'login',
     link: '#/login'
   },
   {
     title: 'Register',
     caption: 'Registracija',
-    icon: 'record_voice_over',
+    icon: 'how_to_reg',
     link: '#/register'
   },
   {
     title: 'Profil',
     caption: 'Otvori moj profil',
-    icon: 'rss_feed',
+    icon: 'account_circle',
     link: '#/profil'
   },
   {
     title: 'Spremljeni recepti',
     caption: 'Pregled spremljenih recepata',
-    icon: 'public',
+    icon: 'menu_book',
     link: '#/spremljeni_recepti'
   },
   {
     title: 'Izrada recepta',
     caption: 'Izradi svoj recept',
-    icon: 'favorite',
+    icon: 'edit_note',
     link: '#/izrada_recepta'
   },
   {
     title: 'Pretraga korisnika',
     caption: 'Pretraži korisnike',
-    icon: 'record_voice_over',
+    icon: 'person_search',
     link: '#/pretraga_korisnika'
   }
 ]

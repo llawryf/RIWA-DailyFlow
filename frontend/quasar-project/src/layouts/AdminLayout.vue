@@ -57,25 +57,25 @@ const linksList = [
 {
     title: 'Admin',
     caption: 'admin page',
-    icon: 'record_voice_over',
+    icon: 'admin_panel_settings',
     link: '#/admin'
   },
   {
     title: 'User management',
     caption: 'upravljanje računima korisnika',
-    icon: 'home',
+    icon: 'manage_accounts',
     link: '#/admin/korisnici'
   },
   {
     title: 'Recipe management',
     caption: 'dodavanje/brisanje recepata',
-    icon: 'search',
+    icon: 'exposure',
     link: '#/admin/recepti'
   },
   {
     title: 'Logout',
     caption: 'logout',
-    icon: 'record_voice_over',
+    icon: 'logout',
     link: '#/admin/logout'
   },
 
