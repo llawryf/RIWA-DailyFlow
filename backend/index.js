@@ -28,9 +28,8 @@ connection.connect(function(err) {
     console.log("Connected!");
   });
 
-  app.get("/api/pretragaRecepata", (req, res) => {
- //req  - slanje zahtjeva s klijentske strane, res - slanje odgovora sa serverske strane
-   connection.query("SELECT * FROM Recept", (error, results) => {
+  app.get("/api/pretragaRecepta", (req, res) => {
+   connection.query("SELECT recipeId, recipeName, recipeTags, recipeRating FROM Recipe", (error, results) => {
       if (error) throw error;
       res.send(results);
     });
