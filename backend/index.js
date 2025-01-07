@@ -53,7 +53,30 @@ connection.connect(function(err) {
       if (error) throw error;
       res.send(results);
     });
-    
+
+
+  });
+
+
+
+  app.get("/api/prikazsvihRecepata/:id_korisnik", (req, res) => {
+    const id_korisnik = req.params.id_korisnik;
+    connection.query(
+      "SELECT recipeId, recipeName,userEmail,recipeDescription, recipeTags, recipeRating  FROM Recipe, User WHERE Recipe.userId = User.userId AND User.userId = ?",
+      id_korisnik,
+      (error, results) => {
+        if (error) {
+          console.error('Database query error:', error);
+          res.status(500).json({ error: 'Internal Server Error' });
+          return;
+        }
+        if (results.length === 0) {
+          res.status(404).json({ message: 'No recipes found for this user' });
+          return;
+        }
+        res.json(results);
+      }
+    );
   });
   app.post("/api/unos_knjige", (req, res) => {
     const data = req.body;
