@@ -129,6 +129,45 @@ connection.connect(function(err) {
       }
     });
   });
+
+  app.post("/login", (req, res) => {
+    const { username, password } = req.body;
+  
+    // Check if username and password are provided
+    if (!username || !password) {
+      return res.status(400).json({ success: false, message: 'Korisničko ime i lozinka su obavezni.' });
+    }
+  
+    // Find user by username
+    const query = 'SELECT * FROM KORISNIK WHERE KorisnickoIme = ?';
+    connection.query(query, [username], (err, results) => {
+      if (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ success: false, message: 'Greška u bazi podataka.' });
+      }
+  
+      // If no user found, return error
+      if (results.length === 0) {
+        return res.status(400).json({ success: false, message: 'Pogrešno korisničko ime ili lozinka.' });
+      }
+  
+      // Get the stored hashed password
+      const user = results[0];
+      bcrypt.compare(password, user.Lozinka, (err, isMatch) => {
+        if (err) {
+          console.error('Error comparing passwords:', err);
+          return res.status(500).json({ success: false, message: 'Greška pri usporedbi lozinke.' });
+        }
+  
+        // If passwords match, return success, otherwise return error
+        if (isMatch) {
+          return res.status(200).json({ success: true, message: 'Prijava uspješna.' });
+        } else {
+          return res.status(400).json({ success: false, message: 'Pogrešno korisničko ime ili lozinka.' });
+        }
+      });
+    });
+  });
   
   app.listen(port, () => {
     console.log("Server running at port: " + port);

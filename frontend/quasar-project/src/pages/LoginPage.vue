@@ -1,15 +1,16 @@
 <template>
   <q-page padding>
-    <!-- Naslov i opis -->
+    <!-- Toolbar for page title -->
     <q-toolbar>
       <q-toolbar-title>Prijava</q-toolbar-title>
     </q-toolbar>
 
+    <!-- Instructions for the user -->
     <div class="q-mb-md">
       <p>Molimo vas da unesete svoje korisničko ime i lozinku za prijavu.</p>
     </div>
 
-    <!-- Forma za prijavu -->
+    <!-- Login Form -->
     <q-form @submit="submitLogin">
       <div class="q-mb-md">
         <q-input
@@ -30,30 +31,41 @@
         />
       </div>
 
-      <!-- Gumb za potvrdu -->
-      <q-btn label="Potvrdi" color="primary" type="submit" />
+      <!-- Submit button -->
+      <q-btn label="Potvrdi" color="primary" type="submit" :loading="isLoading" />
     </q-form>
+
+    <!-- Loading spinner indicator -->
+    <div v-if="isLoading" class="q-mt-md" style="text-align: center;">
+      <q-spinner-dots size="50px" color="primary" />
+    </div>
   </q-page>
 </template>
 
 <script>
+import axios from 'axios';
+import { useQuasar } from 'quasar';
+
+
 export default {
   name: 'LoginPage',
 
   data() {
     return {
-      // Objekt za unos korisničkog imena i lozinke
+      // Object to store user input
       loginData: {
         username: '',
         password: '',
-      }
+      },
+
+      // State variable to track loading state
+      isLoading: false
     };
   },
 
   methods: {
-    // Funkcija za prijavu
-    submitLogin() {
-      // Provjera da li su uneseni podaci
+    async submitLogin() {
+      // Check if the username and password are provided
       if (!this.loginData.username || !this.loginData.password) {
         this.$q.notify({
           type: 'negative',
@@ -62,19 +74,46 @@ export default {
         return;
       }
 
-      // Simulacija slanja podataka (zamijeniti s pozivom na API za prijavu)
-      console.log('Prijava korisnika:', this.loginData);
+      // Set loading state to true
+      this.isLoading = true;
 
-      // Ovdje možeš dodati logiku za stvarnu autentifikaciju, npr. poziv na API
+      // Prepare login data to send to the backend
+      const loginData = {
+        username: this.loginData.username,
+        password: this.loginData.password
+      };
 
-      // Obavijest o uspješnoj prijavi
-      this.$q.notify({
-        type: 'positive',
-        message: 'Prijava uspješna!',
-      });
+      try {
+        // Send login data to the backend API for validation
+        const response = await axios.post("http://localhost:3000/login", loginData);
 
-      // Ovdje bi se mogao preusmjeriti korisnik na drugu stranicu nakon uspješne prijave
-      this.$router.push('/');
+        // Handle the response
+        if (response.data.success) {
+          // Success notification
+          this.$q.notify({
+            type: 'positive',
+            message: 'Prijava uspješna!',
+          });
+
+          // Redirect to the home page (or any other page after successful login)
+          this.$router.push('/');
+        } else {
+          // Failure notification
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          });
+        }
+      } catch (error) {
+        // Error notification
+        this.$q.notify({
+          type: 'negative',
+          message: 'Došlo je do greške. Pokušajte ponovo.',
+        });
+      } finally {
+        // Reset loading state after request is completed
+        this.isLoading = false;
+      }
     }
   }
 };

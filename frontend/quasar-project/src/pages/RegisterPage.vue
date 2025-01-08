@@ -64,6 +64,9 @@
 
 <script>
 import axios from 'axios';
+import { useQuasar } from 'quasar';
+
+
 
 export default {
   name: 'RegistrationPage',
@@ -82,6 +85,7 @@ export default {
 
   methods: {
     async submitRegistration() {
+      const $q = useQuasar()
       // Validate form fields
       if (this.user.firstName === '' || this.user.lastName === '' || this.user.email === '' || this.user.password === '' || this.user.confirmPassword === '') {
         this.$q.notify({
