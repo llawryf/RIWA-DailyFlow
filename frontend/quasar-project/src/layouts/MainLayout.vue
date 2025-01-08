@@ -31,10 +31,14 @@
           Essential Links
         </q-item-label>
 
+        <!-- Use `EssentialLink` with `to` instead of `link` -->
         <EssentialLink
           v-for="link in linksList"
           :key="link.title"
-          v-bind="link"
+          :title="link.title"
+          :caption="link.caption"
+          :icon="link.icon"
+          :to="link.link"
         />
       </q-list>
     </q-drawer>
@@ -58,49 +62,49 @@ const linksList = [
     title: 'Naslovna',
     caption: 'početna stranica',
     icon: 'home',
-    link: '#'
+    link: '/'  // Ensure this points to the root path for Vue Router
   },
   {
     title: 'Pretraživanje',
     caption: 'pretraživanje recepata',
     icon: 'search',
-    link: '#/pretraga_recepata'
+    link: '/pretraga_recepata'  // Remove '#' and just use the Vue Router path
   },
   {
     title: 'Login',
     caption: 'Prijava',
     icon: 'login',
-    link: '#/login'
+    link: '/login'  // Remove '#' and just use the Vue Router path
   },
   {
     title: 'Register',
     caption: 'Registracija',
     icon: 'how_to_reg',
-    link: '#/register'
+    link: '/register'  // Remove '#' and just use the Vue Router path
   },
   {
     title: 'Profil',
     caption: 'Otvori moj profil',
     icon: 'account_circle',
-    link: '#/profil'
+    link: '/profil'  // Remove '#' and just use the Vue Router path
   },
   {
     title: 'Spremljeni recepti',
     caption: 'Pregled spremljenih recepata',
     icon: 'menu_book',
-    link: '#/spremljeni_recepti'
+    link: '/spremljeni_recepti'  // Remove '#' and just use the Vue Router path
   },
   {
     title: 'Izrada recepta',
     caption: 'Izradi svoj recept',
     icon: 'edit_note',
-    link: '#/izrada_recepta'
+    link: '/izrada_recepta'  // Remove '#' and just use the Vue Router path
   },
   {
     title: 'Pretraga korisnika',
     caption: 'Pretraži korisnike',
     icon: 'person_search',
-    link: '#/pretraga_korisnika'
+    link: '/pretraga_korisnika'  // Remove '#' and just use the Vue Router path
   }
 ]
 

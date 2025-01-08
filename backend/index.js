@@ -37,17 +37,6 @@ connection.connect(function(err) {
   });
 
 
-  app.get("/api/knjige/:naslov", (req, res) => {
-    //req  - slanje zahtjeva s klijentske strane, res - slanje odgovora sa serverske strane
-    const naslov= req.params.naslov;
-      connection.query("SELECT * FROM knjiga WHERE naslov = ?", naslov,(error, results) => {
-         if (error) throw error;
-         res.send(results);
-       });
-       
-     });
-
-
   app.get("/api/PetragaKorisnika/", (req, res) => {
     connection.query("SELECT userId, username FROM User",(error, results) => {
       if (error) throw error;
@@ -78,20 +67,11 @@ connection.connect(function(err) {
       }
     );
   });
+ 
   app.post("/api/unos_knjige", (req, res) => {
     const data = req.body;
     knjiga = [[data.naslov,data.autor, data.opis,data.stanje,data.slika]]
    connection.query("INSERT INTO knjiga (naslov, autor, opis,stanje,slika) VALUES ?", [knjiga], (error, results) => {
-      if (error) throw error;
-      res.send(results);
-    });
-   // res.send("poslano"+data.id_knjiga);
-  });
-
-  app.post("/api/rezerv_knjige", (req, res) => {
-    const data = req.body;
-    rezervacija = [[data.datum,data.id_knjiga, data.id_korisnik]]
-   connection.query("INSERT INTO rezervacija (datum_rez, knjiga, korisnik) VALUES ?", [rezervacija], (error, results) => {
       if (error) throw error;
       res.send(results);
     });
