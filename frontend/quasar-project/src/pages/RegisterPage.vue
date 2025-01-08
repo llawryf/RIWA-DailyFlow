@@ -1,16 +1,14 @@
 <template>
   <q-page padding>
-    <!-- Naslov i opis registracije -->
     <q-toolbar>
       <q-toolbar-title>Registracija korisnika</q-toolbar-title>
     </q-toolbar>
-    
+
     <div class="q-mb-md">
       <p>Popunite polja za registraciju kako biste postali član naše platforme.</p>
     </div>
 
-    <!-- Forma za registraciju -->
-    <q-form @submit="submitRegistration">
+    <q-form @submit="submitRegistration" ref="registrationForm">
       <div class="q-mb-md">
         <q-input
           v-model="user.firstName"
@@ -59,33 +57,41 @@
         />
       </div>
 
-      <!-- Gumb za potvrdu -->
       <q-btn label="Potvrdi" color="primary" type="submit" />
     </q-form>
   </q-page>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'RegistrationPage',
 
   data() {
     return {
-      // Objekt koji čuva podatke za registraciju korisnika
       user: {
         firstName: '',
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: '',
+        confirmPassword: ''
       }
     };
   },
 
   methods: {
-    // Funkcija za obradu registracije
-    submitRegistration() {
-      // Provjera da li su unesene sve obavezne informacije i da lozinke odgovaraju
+    async submitRegistration() {
+      // Validate form fields
+      if (this.user.firstName === '' || this.user.lastName === '' || this.user.email === '' || this.user.password === '' || this.user.confirmPassword === '') {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Sva polja su obavezna!',
+        });
+        return;
+      }
+
+      // Check if passwords match
       if (this.user.password !== this.user.confirmPassword) {
         this.$q.notify({
           type: 'negative',
@@ -94,17 +100,39 @@ export default {
         return;
       }
 
-      // Simulacija slanja podataka (zamijeniti s pozivom na API za registraciju)
-      console.log('Podaci za registraciju:', this.user);
+      // Prepare the registration data
+      const registrationData = {
+        korIme: `${this.user.firstName} ${this.user.lastName}`,
+        email: this.user.email,
+        password: this.user.password
+      };
 
-      // Obavijest o uspješnoj registraciji
-      this.$q.notify({
-        type: 'positive',
-        message: 'Registracija uspješna!',
-      });
+      try {
+        // Send registration data to the backend API
+        const response = await axios.post("http://localhost:3000/register", registrationData);
 
-      // Ovdje bi se mogao preusmjeriti korisnik na prijavu ili početnu stranicu
-      this.$router.push('/');
+        // Check response and notify user
+        if (response.data.success) {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          });
+
+          // Redirect to login page after successful registration
+          this.$router.push('/login');
+        } else {
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          });
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        this.$q.notify({
+          type: 'negative',
+          message: 'Došlo je do greške. Pokušajte ponovo.',
+        });
+      }
     }
   }
 };

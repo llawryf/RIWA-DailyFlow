@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
+const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3000;
@@ -9,6 +10,7 @@ const port = 3000;
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.json());
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,6 +25,8 @@ const connection = mysql.createConnection({
   
 app.use(express.urlencoded({ extended: true }));
   
+
+
 connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
@@ -86,6 +90,46 @@ connection.connect(function(err) {
     });
   });
 
+  app.post("/register", async (req, res) => {
+    const { korIme, email, password } = req.body;
+  
+    // Check if all required fields are present
+    if (!korIme || !email || !password) {
+      return res.status(400).json({ success: false, message: 'All fields are required.' });
+    }
+  
+    // Check if user already exists in the database
+    const query = 'SELECT * FROM KORISNIK WHERE EmailKorisnika = ?';
+    connection.query(query, [email], async (err, results) => {
+      if (err) {
+        console.error('Error during user query:', err);  // Log the exact error
+        return res.status(500).json({ success: false, message: 'An error occurred while checking the user.' });
+      }
+  
+      if (results.length > 0) {
+        return res.status(400).json({ success: false, message: 'Email already exists.' });
+      }
+  
+      // Hash password and insert new user into the database
+      try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const insertQuery = 'INSERT INTO KORISNIK (EmailKorisnika, Lozinka, KorisnickoIme) VALUES (?, ?, ?)';
+        
+        connection.query(insertQuery, [email, hashedPassword, korIme], (err, results) => {
+          if (err) {
+            console.error('Error during user insertion:', err);  // Log the exact error
+            return res.status(500).json({ success: false, message: 'An error occurred while creating the user.' });
+          }
+  
+          return res.status(201).json({ success: true, message: 'Account created successfully.' });
+        });
+      } catch (hashError) {
+        console.error('Error during password hashing:', hashError);  // Log the hashing error
+        return res.status(500).json({ success: false, message: 'An error occurred while hashing the password.' });
+      }
+    });
+  });
+  
   app.listen(port, () => {
     console.log("Server running at port: " + port);
 });
