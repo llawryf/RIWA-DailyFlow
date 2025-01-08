@@ -42,7 +42,7 @@ connection.connect(function(err) {
 
 
   app.get("/api/PetragaKorisnika/", (req, res) => {
-    connection.query("SELECT userId, username FROM User",(error, results) => {
+    connection.query("SELECT KorisnickoIme, EmailKorisnika FROM KORISNIK",(error, results) => {
       if (error) throw error;
       res.send(results);
     });
