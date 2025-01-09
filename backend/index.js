@@ -168,7 +168,36 @@ connection.connect(function(err) {
       });
     });
   });
+
+
+  app.put("/api/updateUser/:id", (req, res) => {
+    const { id } = req.params;
+    const { EmailKorisnika, Lozinka, KorisnickoIme, PreferencijeKorisnika } = req.body;
   
+    // SQL upit za ažuriranje podataka korisnika
+    const query = `
+      UPDATE KORISNIK 
+      SET EmailKorisnika = ?, Lozinka = ?, PreferencijeKorisnika = ? 
+      WHERE KorisnickoIme = ?`;
+  
+    // Vrednosti za upit
+    const values = [EmailKorisnika, Lozinka, PreferencijeKorisnika, KorisnickoIme];
+  
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+      if (results.affectedRows === 0) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+      res.json({ message: 'User updated successfully' });
+    });
+  });
+  
+
   app.listen(port, () => {
     console.log("Server running at port: " + port);
 });
