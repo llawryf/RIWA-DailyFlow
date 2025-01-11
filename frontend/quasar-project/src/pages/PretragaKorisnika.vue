@@ -5,15 +5,11 @@
         outlined
         v-model="PretragaKorisnika"
         label="Pretraži Korisnike"
-        class="q-mb-md"
-        @input="filterUsers"
-        clearable
-      >
+        class="q-mb-md" clearable>
         <template v-slot:append>
           <q-icon name="search" />
         </template>
-      </q-input>
-
+</q-input>
       <q-table
         separator="horizontal"
         title="Pretraga Korisnika"
@@ -27,15 +23,13 @@
         table-header-class="bg-red-2"
         bordered
         flat
-        square
-      >
+        square>
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th
               v-for="col in props.cols"
               :key="col.name"
-              :props="props"
-            >
+              :props="props">
               {{ col.label }}
             </q-th>
           </q-tr>
@@ -51,18 +45,14 @@
     </q-td>
   </q-tr>
 </template>
-
       </q-table>
-
     </div>
   </q-page>
-
 </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios';
-
 const style1 = {
   fontSize: '18px'
 };
@@ -71,18 +61,18 @@ const style2 = {
 };
 const columns = [
   {
-    name: 'EmailKorisnika',
-    label: 'Email',
-    field: 'EmailKorisnika',
+    name: 'KorisnickoIme',
+    label: 'Korisničko Ime',
+    field: 'KorisnickoIme',
     align: 'left',
     sortable: true,
     style: style1,
     headerStyle: style2
   },
   {
-    name: 'KorisnickoIme',
-    label: 'Korisničko Ime',
-    field: 'KorisnickoIme',
+    name: 'EmailKorisnika',
+    label: 'Email',
+    field: 'EmailKorisnika',
     align: 'left',
     sortable: true,
     style: style1,
@@ -92,19 +82,17 @@ const columns = [
 
 const users = ref([]);
 const PretragaKorisnika = ref('');
-
 export default {
   setup() {
     const filteredUsers = computed(() => {
   if (!PretragaKorisnika.value.trim()) return users.value;
   const filtered = users.value.filter((user) =>
-    user.KorisnickoIme.toLowerCase().includes(PretragaKorisnika.value.toLowerCase())
+    user.KorisnickoIme?.toLowerCase().includes(PretragaKorisnika.value.toLowerCase())
   );
-  console.log('Filtered users:', filtered); // Log filtered users
+  //upitnik na kraju user.KorisnickoIme? osigurava da se tolowercase pozove samo ak KorisnickoIme nije null
+  console.log('Filtered users:', filtered);
   return filtered;
 });
-
-
     return {
       columns,
       users,
@@ -112,17 +100,15 @@ export default {
       filteredUsers,
     };
   },
-
   mounted() {
-    this.loadUsers(); // Load users when the component is mounted
+    this.loadUsers();
   },
-
   methods: {
     async loadUsers() {
       try {
         const result = await axios.get('http://localhost:3000/api/PetragaKorisnika/');
         if (Array.isArray(result.data)) {
-          users.value = result.data; // Populate users with the fetched data
+          users.value = result.data;
         } else {
           console.error('Invalid data format:', result.data);
         }
