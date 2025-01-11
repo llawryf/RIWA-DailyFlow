@@ -31,6 +31,13 @@
           Essential Links
         </q-item-label>
 
+        <!-- Show Username if Logged In -->
+        <q-item v-if="isLoggedIn">
+          <q-item-section>
+            <q-item-label>Welcome, {{ username }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <!-- Use `EssentialLink` with `to` instead of `link` -->
         <EssentialLink
           v-for="link in linksList"
@@ -50,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted, watchEffect } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 
 defineOptions({
@@ -62,53 +69,71 @@ const linksList = [
     title: 'Naslovna',
     caption: 'početna stranica',
     icon: 'home',
-    link: '/'  // Ensure this points to the root path for Vue Router
+    link: '/'
   },
   {
     title: 'Pretraživanje',
     caption: 'pretraživanje recepata',
     icon: 'search',
-    link: '/pretraga_recepata'  // Remove '#' and just use the Vue Router path
+    link: '/pretraga_recepata'
   },
   {
     title: 'Login',
     caption: 'Prijava',
     icon: 'login',
-    link: '/login'  // Remove '#' and just use the Vue Router path
+    link: '/login'
   },
   {
     title: 'Register',
     caption: 'Registracija',
     icon: 'how_to_reg',
-    link: '/register'  // Remove '#' and just use the Vue Router path
+    link: '/register'
   },
   {
     title: 'Profil',
     caption: 'Otvori moj profil',
     icon: 'account_circle',
-    link: '/profil'  // Remove '#' and just use the Vue Router path
+    link: '/profil'
   },
   {
     title: 'Spremljeni recepti',
     caption: 'Pregled spremljenih recepata',
     icon: 'menu_book',
-    link: '/spremljeni_recepti'  // Remove '#' and just use the Vue Router path
+    link: '/spremljeni_recepti'
   },
   {
     title: 'Izrada recepta',
     caption: 'Izradi svoj recept',
     icon: 'edit_note',
-    link: '/izrada_recepta'  // Remove '#' and just use the Vue Router path
+    link: '/izrada_recepta'
   },
   {
     title: 'Pretraga korisnika',
     caption: 'Pretraži korisnike',
     icon: 'person_search',
-    link: '/pretraga_korisnika'  // Remove '#' and just use the Vue Router path
+    link: '/pretraga_korisnika'
   }
 ]
 
 const leftDrawerOpen = ref(false)
+
+// Check if user is logged in
+const isLoggedIn = ref(false)
+const username = ref('')
+
+// Fetch the username and token from sessionStorage
+watchEffect(() => {
+  const token = sessionStorage.getItem('authToken')
+  const storedUsername = sessionStorage.getItem('username')
+
+  if (token && storedUsername) {
+    isLoggedIn.value = true
+    username.value = storedUsername
+  } else {
+    isLoggedIn.value = false
+    username.value = ''
+  }
+})
 
 function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value

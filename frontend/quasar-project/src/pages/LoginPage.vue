@@ -46,7 +46,6 @@
 import axios from 'axios';
 import { useQuasar } from 'quasar';
 
-
 export default {
   name: 'LoginPage',
 
@@ -63,58 +62,62 @@ export default {
     };
   },
 
+  mounted() {
+    // Provjera ako je vec netko ulogiran
+    const token = sessionStorage.getItem('authToken');
+    if (token) {
+      // Ako da, ridirekcija na index page
+      this.$router.push('/');
+    }
+  },
+
   methods: {
-    async submitLogin() {
-      // Check if the username and password are provided
-      if (!this.loginData.username || !this.loginData.password) {
+  async submitLogin() {
+    if (!this.loginData.username || !this.loginData.password) {
+      this.$q.notify({
+        type: 'negative',
+        message: 'Molimo vas da unesete korisničko ime i lozinku.',
+      });
+      return;
+    }
+
+    this.isLoading = true;
+
+    const loginData = {
+      username: this.loginData.username,
+      password: this.loginData.password,
+    };
+
+    try {
+      const response = await axios.post("http://localhost:3000/login", loginData);
+
+      if (response.data.success) {
+        sessionStorage.setItem('authToken', response.data.token);
+        sessionStorage.setItem('username', this.loginData.username);
+
+        this.$q.notify({
+          type: 'positive',
+          message: 'Prijava uspješna!',
+        });
+
+        // Dynamically update the username in MainLayout
+        this.$router.push('/');
+      } else {
         this.$q.notify({
           type: 'negative',
-          message: 'Molimo vas da unesete korisničko ime i lozinku.',
+          message: response.data.message,
         });
-        return;
       }
-
-      // Set loading state to true
-      this.isLoading = true;
-
-      // Prepare login data to send to the backend
-      const loginData = {
-        username: this.loginData.username,
-        password: this.loginData.password
-      };
-
-      try {
-        // Send login data to the backend API for validation
-        const response = await axios.post("http://localhost:3000/login", loginData);
-
-        // Handle the response
-        if (response.data.success) {
-          // Success notification
-          this.$q.notify({
-            type: 'positive',
-            message: 'Prijava uspješna!',
-          });
-
-          // Redirect to the home page (or any other page after successful login)
-          this.$router.push('/');
-        } else {
-          // Failure notification
-          this.$q.notify({
-            type: 'negative',
-            message: response.data.message,
-          });
-        }
-      } catch (error) {
-        // Error notification
-        this.$q.notify({
-          type: 'negative',
-          message: 'Došlo je do greške. Pokušajte ponovo.',
-        });
-      } finally {
-        // Reset loading state after request is completed
-        this.isLoading = false;
-      }
+    } catch (error) {
+      this.$q.notify({
+        type: 'negative',
+        message: 'Došlo je do greške. Pokušajte ponovo.',
+      });
+    } finally {
+      this.isLoading = false;
     }
   }
+}
+
 };
 </script>
