@@ -90,6 +90,28 @@ connection.connect(function(err) {
     });
   });
 
+  app.post("/IzradaRecepta", (req, res) => {
+    const { recipeName, recipeDescription, recipeTags } = req.body;
+    // Provjera jesu li polja ispunjena
+    if (!recipeName || !recipeDescription || !recipeTags) {
+      return res.status(400).json({ error: "Sva polja su obavezna!" });}
+    // SQL upit za unos podataka
+    const query = "INSERT INTO Recipe (recipeName, recipeDescription, recipeTags) VALUES (?, ?, ?)";
+    const values = [recipeName, recipeDescription, recipeTags];
+    // Izvršavanje upita
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        console.error("Greška prilikom unosa u bazu:", error);
+        return res.status(500).json({ error: "Došlo je do pogreške prilikom unosa u bazu." });}
+      // Uspješan odgovor
+      res.status(201).json({
+        message: "Recept uspješno unesen!",
+        data: { id: results.insertId, recipeName, recipeDescription, recipeTags },
+      });
+    });
+  });
+  
+
   app.post("/register", async (req, res) => {
     const { korIme, email, password } = req.body;
   
