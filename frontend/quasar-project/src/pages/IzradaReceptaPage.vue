@@ -1,11 +1,17 @@
 <template>
   <q-page padding>
-    <!-- Check if user is logged in -->
+    <!-- Ako JE ulogiran -->
     <div v-if="isLoggedIn">
       <p>Yes</p>
     </div>
+    <!-- Ako NIJE ulogiran -->
     <div v-else>
-      <p>No</p>
+      <p>Prijavite se za izradu recepta</p>
+      <q-btn
+        label="Prijava"
+        color="primary"
+        @click="redirectToLogin"
+      />
     </div>
   </q-page>
 </template>
@@ -14,9 +20,15 @@
 export default {
   data() {
     return {
-      // Check if the token exists in localStorage to determine if the user is logged in
-      isLoggedIn: !!localStorage.getItem('authToken')
+      // Provjera ako je korisnik ulogiran / ako postoji session
+      isLoggedIn: !!sessionStorage.getItem('authToken')
     };
+  },
+  //ridirekcija na prijavu ako nije prijavljen
+  methods: {
+    redirectToLogin() {
+      this.$router.push('/login');
+    }
   }
-}
+};
 </script>

@@ -38,7 +38,7 @@
           </q-item-section>
         </q-item>
 
-        <!-- Use `EssentialLink` with `to` instead of `link` -->
+        <!-- Use EssentialLink with to instead of link -->
         <EssentialLink
           v-for="link in linksList"
           :key="link.title"
