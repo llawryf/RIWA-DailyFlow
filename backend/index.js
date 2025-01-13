@@ -192,6 +192,24 @@ connection.connect(function(err) {
   });
 
 
+  app.delete('/api/DeleteRecipe/:id', async (req, res) => {
+    const { id } = req.params; // dohvat id-a iz poziva
+    try {
+      const result = await pool.query(
+        'DELETE FROM Recipe WHERE recipeId = $1 RETURNING *',
+        [id]
+      );
+      if (result.rowCount === 0) {
+        return res.status(404).json({ error: 'Recipe not found.' });
+      }
+
+      res.status(200).json({ message: 'Recipe deleted successfully', deletedRecipe: result.rows[0] });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'An error occurred while deleting the recipe.' });
+    }
+  });
+
   app.put("/api/updateUser/:id", (req, res) => {
     const { id } = req.params;
     const { EmailKorisnika, Lozinka, KorisnickoIme, PreferencijeKorisnika } = req.body;
