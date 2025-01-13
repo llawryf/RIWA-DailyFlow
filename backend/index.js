@@ -212,16 +212,16 @@ connection.connect(function(err) {
 
   app.put("/api/updateUser/:id", (req, res) => {
     const { id } = req.params;
-    const { EmailKorisnika, Lozinka, KorisnickoIme, PreferencijeKorisnika } = req.body;
+    const {  Lozinka, Mail, PreferencijeKorisnika } = req.body;
   
-    // SQL upit za ažuriranje podataka korisnika
+    
     const query = `
       UPDATE KORISNIK 
-      SET EmailKorisnika = ?, Lozinka = ?, PreferencijeKorisnika = ? 
-      WHERE KorisnickoIme = ?`;
+      SET Lozinka = ?, PreferencijeKorisnika = ? 
+      WHERE EmailKorisnika = ?`;
   
-    // Vrednosti za upit
-    const values = [EmailKorisnika, Lozinka, PreferencijeKorisnika, KorisnickoIme];
+    
+    const values = [ Lozinka, PreferencijeKorisnika, Mail];
   
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -230,10 +230,10 @@ connection.connect(function(err) {
         return;
       }
       if (results.affectedRows === 0) {
-        res.status(404).json({ message: 'User not found' });
+        res.status(404).json({ message: 'Korisnik nije pronađen' });
         return;
       }
-      res.json({ message: 'User updated successfully' });
+      res.json({ message: 'Podaci su uspješno ažurirani' });
     });
   });
   

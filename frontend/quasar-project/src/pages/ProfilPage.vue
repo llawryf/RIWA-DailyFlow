@@ -5,27 +5,26 @@
       <q-toolbar-title>Moj profil</q-toolbar-title>
     </q-toolbar>
     <div class="q-mb-md" style="margin-bottom: 1rem;">
-      <p>Na ovoj stranici je moguće promijeniti svoje postavke računa kao što su email, lozinka i preference.</p>
+      <p>Na ovoj stranici je moguće promijeniti svoje postavke računa kao što su lozinka i preference.</p>
     </div>
-    <q-form @submit="updateUser">     
+    <q-form @submit="updateUser">
 
-      <!-- Username Input -->
-      <q-input v-model="username" label="Username" type="text" required />
+      <!-- mail Input -->
+      <q-input v-model="mail" label="Email" type="text" required />
 
-      <!-- Email Input -->
-      <q-input v-model="userEmail" label="Email" type="email" required />
+
 
       <!-- Password Input -->
-      <q-input v-model="password" label="Password" type="password" required />
+      <q-input v-model="password" label="Lozinka" type="password" required />
 
       <!-- Preferences Input -->
-      <q-input v-model="userPreferences" label="Preferences" type="text" />
+      <q-input v-model="userPreferences" label="Preference" type="text" />
 
       <!-- Submit Button -->
       <div style="margin-top: 1rem;">
-        <q-btn label="Update User" color="primary" type="submit" />
+        <q-btn label="Ažuriraj" color="primary" type="submit" />
       </div>
-      
+
     </q-form>
   </q-page>
 </template>
@@ -39,8 +38,8 @@ export default {
 
   setup() {
     // Reactive data for user input fields
-    const userEmail = ref('');
-    const username = ref('');
+
+    const mail = ref('');
     const password = ref('');
     const userPreferences = ref('');
 
@@ -48,28 +47,32 @@ export default {
     const updateUser = async () => {
       try {
         // Assuming userId is stored in session or you get it dynamically
-        const userId = 1; // or fetch from session, for example
 
-        const response = await axios.put(`http://localhost:3000/api/updateUser/${userId}`, {
-          EmailKorisnika: userEmail.value,
+
+        const response = await axios.put(`http://localhost:3000/api/updateUser/${mail.value}`, {
+
           Lozinka: password.value,
-          KorisnickoIme: username.value,
+          Mail: mail.value,
           PreferencijeKorisnika: userPreferences.value,
         });
 
         // Handle successful update response
         console.log(response.data);
-        alert('User updated successfully!');
-        
+        alert('Podaci su uspješno ažurirani');
+
       } catch (error) {
-        console.error('Error updating user:', error.response?.data || error.message);
-        alert('Error updating user!');
+        console.error('Greška u ažuriranju podataka:', error.response?.data || error.message);
+        alert('Greška u ažuriranju podataka');
       }
+
+      mail.value='';
+      password.value='';
+      userPreferences.value='';
     };
 
     return {
-      userEmail,
-      username,
+
+      mail,
       password,
       userPreferences,
       updateUser,
