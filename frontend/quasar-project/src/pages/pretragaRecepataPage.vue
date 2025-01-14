@@ -72,36 +72,36 @@ export default {
     };
     const columns = [
       {
-        name: "recipeId",
+        name: "SifraRecepta",
         label: "Šifra",
-        field: "recipeId",
+        field: "SifraRecepta",
         align: "left",
         sortable: true,
         style: style1,
         headerStyle: style2,
       },
       {
-        name: "recipeName",
+        name: "NazivRecepta",
         label: "Naziv Recepta",
-        field: "recipeName",
+        field: "NazivRecepta",
         align: "left",
         sortable: true,
         style: style1,
         headerStyle: style2,
       },
       {
-        name: "recipeTags",
+        name: "OznakeRecepta",
         label: "Oznake",
-        field: "recipeTags",
+        field: "OznakeRecepta",
         align: "left",
         sortable: true,
         style: style1,
         headerStyle: style2,
       },
       {
-        name: "recipeRating",
+        name: "OcjenaRecepta",
         label: "Ocjena",
-        field: "recipeRating",
+        field: "OcjenaRecepta",
         align: "left",
         sortable: true,
         style: style1,
@@ -113,7 +113,7 @@ export default {
     const filteredRecipes = computed(() => {
       if (!pretragaRecepta.value.trim()) return recipe.value;
       return recipe.value.filter((rec) =>
-        rec.recipeName.toLowerCase().includes(pretragaRecepta.value.toLowerCase())
+        rec.NazivRecepta.toLowerCase().includes(pretragaRecepta.value.toLowerCase())
       );
     });
 

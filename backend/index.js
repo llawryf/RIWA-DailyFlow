@@ -33,7 +33,7 @@ connection.connect(function(err) {
   });
 
   app.get("/api/pretragaRecepta", (req, res) => {
-   connection.query("SELECT recipeId, recipeName, recipeTags, recipeRating FROM Recipe", (error, results) => {
+   connection.query("SELECT SifraRecepta, NazivRecepta, OznakeRecepta, OcjenaRecepta FROM Recept", (error, results) => {
       if (error) throw error;
       res.send(results);
     });

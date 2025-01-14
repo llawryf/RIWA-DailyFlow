@@ -5,7 +5,7 @@
         separator="horizontal"
         title="Popis recepata"
         title-class="text-h4 text-bold text-red-9"
-        :rows="books"
+        :rows="recipes"
         :columns="columns"
         row-key="recipeId"
         table-class="text-black"
@@ -65,35 +65,35 @@ const style2 = {
 
 const columns = [
   {
-    name: "recipeId",
+    name: "SifraRecepta",
     label: "ID",
-    field: "recipeId", // Matches API key
+    field: "SifraRecepta",
     align: "left",
     sortable: true,
   },
   {
-    name: "recipeName",
+    name: "NazivRecepta",
     label: "Naziv",
-    field: "recipeName", // Matches API key
+    field: "NazivRecepta",
     align: "left",
   },
   {
-    name: "recipeTags",
+    name: "OznakeRecepta",
     label: "Oznake",
-    field: "recipeTags", // Matches API key
+    field: "OznakeRecepta",
     align: "left",
   },
   {
-    name: "recipeRating",
+    name: "OcjenaRecepta",
     label: "Ocjena",
-    field: "recipeRating", // Matches API key
+    field: "OcjenaRecepta",
     align: "left",
   },
 ];
 
 export default {
   setup() {
-    const books = ref([]);  // Use `books` to store fetched recipes data
+    const recipes = ref([]);
     const pagination = ref({
       rowsPerPage: 10,
     });
@@ -105,7 +105,7 @@ export default {
         // Check if result.data is an array directly
         if (Array.isArray(result.data)) {
           console.log('Received recipes:', result.data);
-          books.value = result.data;  // Update books (recipes) list
+          recipes.value = result.data;  // Update liste
         } else {
           console.error('API response is not in the expected format:', result.data);
         }
@@ -121,7 +121,7 @@ export default {
 
     return {
       columns,
-      books,
+      recipes,
       pagination,
     };
   },
