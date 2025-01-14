@@ -210,6 +210,27 @@ connection.connect(function(err) {
     }
   });
 
+  app.delete('/api/DeleteUser/:email', (req, res) => {
+    const { email } = req.params;
+    
+    // SQL upit za brisanje korisnika
+    const query = 'DELETE FROM KORISNIK WHERE EmailKorisnika = ?';
+    
+    connection.query(query, [email], (error, results) => {
+      if (error) {
+        console.error('Error deleting user:', error);
+        return res.status(500).json({ error: 'An error occurred while deleting the user.' });
+      }
+      
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ message: 'User not found.' });
+      }
+      
+      res.status(200).json({ message: 'User deleted successfully.' });
+    });
+  });
+  
+
   app.put("/api/updateUser/:id", (req, res) => {
     const { id } = req.params;
     const {  Lozinka, Mail, PreferencijeKorisnika } = req.body;

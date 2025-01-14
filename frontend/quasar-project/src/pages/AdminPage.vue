@@ -12,6 +12,6 @@
 
 <script setup>
 defineOptions({
-  name: 'IndexPage'
+  name: 'AdminPage'
 });
 </script>
