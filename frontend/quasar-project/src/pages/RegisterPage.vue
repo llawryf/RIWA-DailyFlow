@@ -6,6 +6,7 @@
 
     <div class="q-mb-md">
       <p>Popunite polja za registraciju kako biste postali član naše platforme.</p>
+      <p>Vaše ime i prezime će biti korisničko ime za ulaz u aplikaciju.</p>
     </div>
 
     <q-form @submit="submitRegistration" ref="registrationForm">

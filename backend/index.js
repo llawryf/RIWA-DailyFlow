@@ -40,9 +40,26 @@ connection.connect(function(err) {
     
   });
 
+  app.get("/api/pretragaSpremljenihRecepta/:email", (req, res) => {
+    const { email } = req.params;
+    
+    const query = `
+        SELECT SifraRecepta, NazivRecepta, OznakeRecepta, OcjenaRecepta, EmailKorisnika 
+        FROM Recept 
+        WHERE EmailKorisnika = ?
+    `;
+    connection.query(query, [email], (error, results) => {
+        if (error) {
+            console.error('Error retrieving recipes:', error);
+            return res.status(500).json({ error: 'An error occurred while retrieving recipes.' });
+        }
+        
+        res.send(results);
+    });
+  });
 
   app.get("/api/PetragaKorisnika/", (req, res) => {
-    connection.query("SELECT KorisnickoIme, EmailKorisnika FROM KORISNIK",(error, results) => {
+    connection.query("SELECT KorisnickoIme, PreferencijeKorisnika FROM KORISNIK",(error, results) => {
       if (error) throw error;
       res.send(results);
     });
@@ -50,27 +67,15 @@ connection.connect(function(err) {
 
   });
 
+ app.get("/api/adminPetragaKorisnika/", (req, res) => {
+    connection.query("SELECT KorisnickoIme, PreferencijeKorisnika FROM KORISNIK",(error, results) => {
+      if (error) throw error;
+      res.send(results);
+    });
 
 
-  app.get("/api/prikazsvihRecepata/:id_korisnik", (req, res) => {
-    const id_korisnik = req.params.id_korisnik;
-    connection.query(
-      "SELECT recipeId, recipeName,userEmail,recipeDescription, recipeTags, recipeRating  FROM Recipe, User WHERE Recipe.userId = User.userId AND User.userId = ?",
-      id_korisnik,
-      (error, results) => {
-        if (error) {
-          console.error('Database query error:', error);
-          res.status(500).json({ error: 'Internal Server Error' });
-          return;
-        }
-        if (results.length === 0) {
-          res.status(404).json({ message: 'No recipes found for this user' });
-          return;
-        }
-        res.json(results);
-      }
-    );
   });
+
  
   app.post("/api/unos_knjige", (req, res) => {
     const data = req.body;

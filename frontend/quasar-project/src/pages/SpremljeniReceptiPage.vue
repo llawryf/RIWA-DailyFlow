@@ -1,13 +1,19 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
+      <q-input
+        outlined
+        label="Unesite email"
+        v-model="email"
+        @blur="loadRecipes"
+      />
       <q-table
         separator="horizontal"
         title="Popis recepata"
         title-class="text-h4 text-bold text-red-9"
         :rows="recipes"
         :columns="columns"
-        row-key="recipeId"
+        row-key="SifraRecepta"
         table-class="text-black"
         table-style="border: 3px solid black;"
         table-header-style="height: 65px"
@@ -19,9 +25,9 @@
         <template v-slot:header="props">
           <q-tr :props="props">
             <q-th
-            v-for="col in props.cols"
-            :key="col.name"
-            :props="props"
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
             >
               {{ col.label }}
             </q-th>
@@ -34,13 +40,10 @@
               :key="col.name"
               :props="props"
             >
-              <!-- Display text for all fields -->
-              <span v-if="col.name !== 'recipeTags'">
+              <span v-if="col.name !== 'OznakeRecepta'">
                 {{ props.row[col.field] }}
               </span>
-
-              <!-- Display tags as text -->
-              <span v-if="col.name === 'recipeTags'">
+              <span v-if="col.name === 'OznakeRecepta'">
                 {{ props.row[col.field] || 'Nema oznaka' }}
               </span>
             </q-td>
@@ -55,74 +58,61 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
-const style1 = {
-  fontSize: '18px',
-};
+export default {
+  name: 'RecipePage',
 
-const style2 = {
-  fontSize: '24px',
-};
+  setup() {
+    const email = ref('');
+    const recipes = ref([]);
 
-const columns = [
-  {
-    name: "SifraRecepta",
-    label: "ID",
-    field: "SifraRecepta",
-    align: "left",
-    sortable: true,
-  },
-  {
-    name: "NazivRecepta",
-    label: "Naziv",
-    field: "NazivRecepta",
-    align: "left",
-  },
-  {
-    name: "OznakeRecepta",
-    label: "Oznake",
-    field: "OznakeRecepta",
-    align: "left",
-  },
-  {
-    name: "OcjenaRecepta",
-    label: "Ocjena",
-    field: "OcjenaRecepta",
-    align: "left",
-  },
+    // Define columns as reactive
+    const columns = [
+  { name: "SifraRecepta", label: "ID", field: "SifraRecepta", align: "left", sortable: true },
+  { name: "NazivRecepta", label: "Naziv", field: "NazivRecepta", align: "left" },
+  { name: "OznakeRecepta", label: "Oznake", field: "OznakeRecepta", align: "left" },
+  { name: "OcjenaRecepta", label: "Ocjena", field: "OcjenaRecepta", align: "left" },
 ];
 
-export default {
-  setup() {
-    const recipes = ref([]);
-    const pagination = ref({
-      rowsPerPage: 10,
-    });
 
     const loadRecipes = async () => {
-      try {
-        const result = await axios.get('http://localhost:3000/api/pretragaRecepta');
 
-        // Check if result.data is an array directly
-        if (Array.isArray(result.data)) {
-          console.log('Received recipes:', result.data);
-          recipes.value = result.data;  // Update liste
-        } else {
-          console.error('API response is not in the expected format:', result.data);
-        }
-      } catch (error) {
-        console.error('Error loading recipes:', error);
+      if (!email.value) {
+        alert('Molimo unesite email');
+        return;
       }
+
+      try {
+    const result = await axios.get(`http://localhost:3000/api/pretragaSpremljenihRecepta/${email.value}`);
+
+
+    if (result.status !== 200) {
+        throw new Error(`API returned status code ${result.status}`); // Bacanje greške za ne-200 statuse
+    }
+
+    if (Array.isArray(result.data)) {
+        recipes.value = result.data;
+    } else {
+        console.error('Odgovor API-ja nije niz:', result.data);
+        alert('Greška: Neočekivani format podataka.');
+    }
+} catch (error) {
+    console.error('Greška pri učitavanju recepata:', error);
+    if (error.response) {
+        console.error('Detalji greške s servera:', error.response.data); // Ispis detalja greške sa servera
+        alert(`Greška: ${error.response.data.error || 'Došlo je do pogreške na serveru.'}`); // Prikaz poruke sa servera ako postoji
+    } else if (error.request) {
+        alert('Greška: Nije primljen odgovor od servera.');
+    } else {
+        alert('Greška: Došlo je do greške prilikom slanja zahtjeva.');
+    }
+}
     };
 
-    // Load recipes when component is mounted
-    onMounted(() => {
-      loadRecipes();
-    });
-
     return {
-      columns,
+      email,
       recipes,
-      pagination,
+      columns,
+      loadRecipes,
     };
   },
 };

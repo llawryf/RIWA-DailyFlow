@@ -70,9 +70,9 @@ const columns = [
     headerStyle: style2
   },
   {
-    name: 'EmailKorisnika',
-    label: 'Email',
-    field: 'EmailKorisnika',
+    name: 'PreferencijeKorisnika',
+    label: 'Preferencije',
+    field: 'PreferencijeKorisnika',
     align: 'left',
     sortable: true,
     style: style1,
