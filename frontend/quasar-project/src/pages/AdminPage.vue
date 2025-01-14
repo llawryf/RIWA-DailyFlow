@@ -4,7 +4,6 @@
 
       <q-btn color="purple" label="Upravljanje receptima" to="/admin/recepti" />
       <q-btn color="purple" label="Upravljanje korisnicima" to="/admin/korisnici" />
-      <q-btn color="purple" label="Logout" to="/admin/logout" />
 
   </div>
   </q-page>

@@ -31,11 +31,20 @@
           Essential Links
         </q-item-label>
 
-        <EssentialLink
+        <q-item
           v-for="link in linksList"
           :key="link.title"
-          v-bind="link"
-        />
+          clickable
+          @click="link.action ? link.action() : navigateTo(link.link)"
+        >
+          <q-item-section avatar>
+            <q-icon :name="link.icon" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ link.title }}</q-item-label>
+            <q-item-label caption>{{ link.caption }}</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -45,16 +54,34 @@
   </q-layout>
 </template>
 
+
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import EssentialLink from 'components/EssentialLink.vue'
 
 defineOptions({
   name: 'AdminLayout'
 })
 
+const router = useRouter()
+const leftDrawerOpen = ref(false)
+
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+function logout() {
+  sessionStorage.removeItem('authToken') // Uklanjanje tokena
+  router.push('/') // Preusmjeravanje na početnu stranicu
+}
+
+function navigateTo(link) {
+  router.push(link)
+}
+
 const linksList = [
-{
+  {
     title: 'Admin',
     caption: 'admin page',
     icon: 'admin_panel_settings',
@@ -76,14 +103,7 @@ const linksList = [
     title: 'Logout',
     caption: 'logout',
     icon: 'logout',
-    link: '/admin/logout'
-  },
-
+    action: logout // Dodana akcija za odjavu
+  }
 ]
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
 </script>
