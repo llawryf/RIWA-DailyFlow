@@ -65,6 +65,7 @@ export default {
   mounted() {
     // Provjera ako je vec netko ulogiran
     const token = sessionStorage.getItem('authToken');
+
     if (token) {
       // Ako da, ridirekcija na index page
       this.$router.push('/');
@@ -101,6 +102,9 @@ export default {
         });
 
         // Dynamically update the username in MainLayout
+        if (this.loginData.username === 'Admin 1') {
+            this.$router.push('http://localhost:9000/#/admin');
+          }
         this.$router.push('/');
       } else {
         this.$q.notify({
