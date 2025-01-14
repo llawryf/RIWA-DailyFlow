@@ -18,6 +18,7 @@
         table-style="border: 3px solid black;"
         table-header-style="height: 65px"
         table-header-class="bg-red-2"
+        no-data-label="Prvo upišite email"
         bordered
         flat
         square
@@ -96,9 +97,9 @@ export default {
         alert('Greška: Neočekivani format podataka.');
     }
 } catch (error) {
-    console.error('Greška pri učitavanju recepata:', error);
+
     if (error.response) {
-        console.error('Detalji greške s servera:', error.response.data); // Ispis detalja greške sa servera
+
         alert(`Greška: ${error.response.data.error || 'Došlo je do pogreške na serveru.'}`); // Prikaz poruke sa servera ako postoji
     } else if (error.request) {
         alert('Greška: Nije primljen odgovor od servera.');
