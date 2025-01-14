@@ -103,9 +103,10 @@ export default {
 
         // Dynamically update the username in MainLayout
         if (this.loginData.username === 'Admin 1') {
-            this.$router.push('http://localhost:9000/#/admin');
-          }
-        this.$router.push('/');
+          this.$router.push('/admin');
+        } else {
+          this.$router.push('/');
+        }
       } else {
         this.$q.notify({
           type: 'negative',
