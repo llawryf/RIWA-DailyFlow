@@ -194,21 +194,20 @@ connection.connect(function(err) {
 
   app.delete('/api/DeleteRecipe/:id', async (req, res) => {
     const { id } = req.params; // dohvat id-a iz poziva
-    try {
-      const result = await pool.query(
-        'DELETE FROM Recipe WHERE recipeId = $1 RETURNING *',
-        [id]
-      );
-      if (result.rowCount === 0) {
-        return res.status(404).json({ error: 'Recipe not found.' });
-      }
-
-      res.status(200).json({ message: 'Recipe deleted successfully', deletedRecipe: result.rows[0] });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'An error occurred while deleting the recipe.' });
-    }
-  });
+    const query = 'DELETE FROM Recept WHERE SifraRecepta = ?';
+        connection.query(query, [id], (error, results) => {
+          if (error) {
+            console.error('Error deleting recipe:', error);
+            return res.status(500).json({ error: 'An error occurred while deleting the recipe.' });
+          }
+          
+          if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'Recipe not found.' });
+          }
+          
+          res.status(200).json({ message: 'Recipe deleted successfully.' });
+        });
+      });
 
   app.delete('/api/DeleteUser/:email', (req, res) => {
     const { email } = req.params;
