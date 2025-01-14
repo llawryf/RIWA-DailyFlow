@@ -45,11 +45,11 @@
             </q-td>
             <q-td>
               <!-- Gumb za brisanje korisnika -->
-              <q-btn 
-                color="negative" 
-                label="Obriši" 
-                @click="deleteUser(props.row.EmailKorisnika)"
-                icon="delete" 
+              <q-btn
+                color="negative"
+                label="Obriši"
+                @click="()=>{console.log('Email to delete:', props.row.EmailKorisnika);deleteUser(props.row.EmailKorisnika)}"
+                icon="delete"
                 size="sm"
                 class="q-ml-sm"
               />
@@ -97,7 +97,7 @@ export default {
 
     const loadUsers = async () => {
       try {
-        const result = await axios.get('http://localhost:3000/api/PetragaKorisnika/');
+        const result = await axios.get('http://localhost:3000/api/adminPetragaKorisnika/');
         if (Array.isArray(result.data)) {
           users.value = result.data;
         } else {
@@ -109,9 +109,13 @@ export default {
     };
 
     const deleteUser = async (email) => {
+      if (!email) {
+        console.error('Email is required to delete a user.');
+        return;
+      }
       try {
         const response = await axios.delete(`http://localhost:3000/api/DeleteUser/${email}`);
-        
+
         if (response.status === 200) {
           // Ažuriraj listu korisnika nakon brisanja
           users.value = users.value.filter(user => user.EmailKorisnika !== email);

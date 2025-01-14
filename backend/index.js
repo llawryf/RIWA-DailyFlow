@@ -68,7 +68,7 @@ connection.connect(function(err) {
   });
 
  app.get("/api/adminPetragaKorisnika/", (req, res) => {
-    connection.query("SELECT KorisnickoIme, PreferencijeKorisnika FROM KORISNIK",(error, results) => {
+    connection.query("SELECT KorisnickoIme, EmailKorisnika FROM KORISNIK",(error, results) => {
       if (error) throw error;
       res.send(results);
     });
