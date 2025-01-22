@@ -76,25 +76,6 @@ connection.connect(function(err) {
 
   });
 
- 
-  app.post("/api/unos_knjige", (req, res) => {
-    const data = req.body;
-    knjiga = [[data.naslov,data.autor, data.opis,data.stanje,data.slika]]
-   connection.query("INSERT INTO knjiga (naslov, autor, opis,stanje,slika) VALUES ?", [knjiga], (error, results) => {
-      if (error) throw error;
-      res.send(results);
-    });
-   // res.send("poslano"+data.id_knjiga);
-  });
-
-  app.get("/api/rezervirane_knjige/:id_korisnik", (req, res) => {
-    const id_korisnik= req.params.id_korisnik;
-    connection.query("SELECT knjiga.id,naslov,autor, korisnik.ime,korisnik.prezime,rezervacija.datum_rez FROM knjiga, rezervacija, korisnik WHERE knjiga.id=rezervacija.knjiga and korisnik.id=rezervacija.korisnik AND korisnik.id=?", id_korisnik,(error, results) => {
-      if (error) throw error;
-      res.send(results);
-    });
-  });
-
   app.post("/IzradaRecepta", (req, res) => {
     const { recipeName, recipeDescription, recipeTags } = req.body;
     // Provjera jesu li polja ispunjena
