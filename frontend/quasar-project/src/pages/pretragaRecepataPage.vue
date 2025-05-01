@@ -20,7 +20,7 @@
         title-class="text-h4 text-bold text-green-9"
         :rows="filteredRecipes"
         :columns="columns"
-        row-key="recipeId"
+        row-key="SifraRecepta"
         table-class="text-black"
         table-style="border: 3px solid black;"
         table-header-style="height: 65px"
@@ -107,6 +107,15 @@ export default {
         style: style1,
         headerStyle: style2,
       },
+      {
+  name: "Sastojci",
+  label: "Sastojci",
+  field: "Sastojci",
+  align: "left",
+  sortable: false,
+  style: style1,
+  headerStyle: style2,
+},
     ];
     const recipe = ref([]);
     const pretragaRecepta = ref('');

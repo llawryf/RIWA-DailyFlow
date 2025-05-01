@@ -33,14 +33,45 @@ connection.connect(function(err) {
   });
 
   app.get("/api/pretragaRecepta", (req, res) => {
-   connection.query("SELECT SifraRecepta, NazivRecepta, OznakeRecepta, OcjenaRecepta FROM Recept", (error, results) => {
+    const query = `
+      SELECT 
+        Recept.SifraRecepta,
+        Recept.NazivRecepta,
+        Recept.OznakeRecepta,
+        Recept.OcjenaRecepta,
+        GROUP_CONCAT(CONCAT(Sastojak.NazivSastojka, ' (', SastojakUReceptu.KolicinaSastojka, ')') SEPARATOR ', ') AS Sastojci
+      FROM Recept
+      LEFT JOIN SastojakUReceptu ON Recept.SifraRecepta = SastojakUReceptu.SifraRecepta
+      LEFT JOIN Sastojak ON Sastojak.SifraSastojka = SastojakUReceptu.SifraSastojka
+      GROUP BY Recept.SifraRecepta, Recept.NazivRecepta, Recept.OznakeRecepta, Recept.OcjenaRecepta
+    `;
+  
+    connection.query(query, (error, results) => {
       if (error) throw error;
       res.send(results);
     });
-    
   });
+  
 
   app.get("/api/pretragaSpremljenihRecepta/:email", (req, res) => {
+    const { email } = req.params;
+    
+    const query = `
+        SELECT SifraRecepta, NazivRecepta, OznakeRecepta, OcjenaRecepta, EmailKorisnika 
+        FROM Recept 
+        WHERE EmailKorisnika = ?
+    `;
+    connection.query(query, [email], (error, results) => {
+        if (error) {
+            console.error('Error retrieving recipes:', error);
+            return res.status(500).json({ error: 'An error occurred while retrieving recipes.' });
+        }
+        
+        res.send(results);
+    });
+  });
+
+  app.get("/api/searchUserSavedRecipes/:email", (req, res) => {
     const { email } = req.params;
     
     const query = `
