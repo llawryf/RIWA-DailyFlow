@@ -1,7 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="text-white relative" style="background-color: #272727;">
+
         <q-btn
           flat
           dense
@@ -11,50 +12,51 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title>
-          Daily Flow
+        <q-toolbar-title class="q-pa-none">
+          <div class="absolute-center">
+            <img src="https://imgur.com/XCLanXO.png" style="height: 40px; padding-top:15px; height:60px">
+          </div>
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
+  v-model="leftDrawerOpen"
+  show-if-above
+  bordered
+  class="text-white" style="background-color: #272727;"
+>
+  <q-list class="text-white" style="background-color:#272727">
+    <q-item-label header class="text-white">
+      Essential Links
+    </q-item-label>
 
-        <!-- Show Username if Logged In -->
-        <q-item v-if="isLoggedIn">
-          <q-item-section>
-            <q-item-label>Welcome, {{ username }}</q-item-label>
-          </q-item-section>
-        </q-item>
+    <q-item v-if="isLoggedIn">
+      <q-item-section>
+        <q-item-label class="text-white">Welcome, {{ username }}</q-item-label>
+      </q-item-section>
+    </q-item>
 
-        <!-- Use EssentialLink with to instead of link -->
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          :title="link.title"
-          :caption="link.caption"
-          :icon="link.icon"
-          :to="link.link"
-        />
-      </q-list>
-    </q-drawer>
+    <EssentialLink
+      v-for="link in linksList"
+      :key="link.title"
+      :title="link.title"
+      :caption="link.caption"
+      :icon="link.icon"
+      :to="link.link"
+    />
+  </q-list>
+</q-drawer>
 
     <q-page-container>
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
+
+
+
 
 <script setup>
 import { ref, watch, onMounted, watchEffect } from 'vue'
@@ -139,3 +141,4 @@ function toggleLeftDrawer () {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 </script>
+
