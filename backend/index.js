@@ -6,6 +6,9 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3000;
+const jwt= require('jsonwebtoken');
+require('dotenv').config({ path: '../.env' });
+
 
 
 app.use(bodyParser.json());
@@ -170,14 +173,15 @@ connection.connect(function(err) {
   });
 
   app.post("/login", (req, res) => {
+    console.log('Request body:', req.body);
     const { username, password } = req.body;
   
-    // Check if username and password are provided
+    //Provjera ako su kor.ime i lozinka uneseni
     if (!username || !password) {
       return res.status(400).json({ success: false, message: 'Korisničko ime i lozinka su obavezni.' });
     }
   
-    // Find user by username
+    //Trazi prema kor.imenu
     const query = 'SELECT * FROM KORISNIK WHERE KorisnickoIme = ?';
     connection.query(query, [username], (err, results) => {
       if (err) {
@@ -185,12 +189,12 @@ connection.connect(function(err) {
         return res.status(500).json({ success: false, message: 'Greška u bazi podataka.' });
       }
   
-      // If no user found, return error
+      //Ako kor. nije naden
       if (results.length === 0) {
         return res.status(400).json({ success: false, message: 'Pogrešno korisničko ime ili lozinka.' });
       }
   
-      // Get the stored hashed password
+      //Dohvacanje hashiranje lozinke
       const user = results[0];
       bcrypt.compare(password, user.Lozinka, (err, isMatch) => {
         if (err) {
@@ -198,11 +202,23 @@ connection.connect(function(err) {
           return res.status(500).json({ success: false, message: 'Greška pri usporedbi lozinke.' });
         }
   
-        // If passwords match, return success, otherwise return error
+        // Ako se lozinke podudaraju + jwt autentikacija:
         if (isMatch) {
-          return res.status(200).json({ success: true, message: 'Prijava uspješna.' });
+          const token = jwt.sign(
+            {
+              username: user.KorisnickoIme,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+          );
+
+          return res.status(200).json({
+            success: true,
+            message: 'Prijava uspješna.',
+            token
+          });
         } else {
-          return res.status(400).json({ success: false, message: 'Pogrešno korisničko ime ili lozinka.' });
+            return res.status(400).json({ success: false, message: 'Pogrešno korisničko ime ili lozinka.' });
         }
       });
     });
