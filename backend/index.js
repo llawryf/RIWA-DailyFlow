@@ -235,13 +235,14 @@ app.post("/login", (req, res) => {
 
       // Ako se lozinke podudaraju + jwt autentikacija:
       if (isMatch) {
+        const { jwtSecrets } = require("../secret");
+
         const token = jwt.sign(
-          {
-            username: user.KorisnickoIme,
-          },
-          process.env.JWT_SECRET,
+          { username: user.KorisnickoIme },
+          jwtSecrets[0], // koristi trenutni ključ
           { expiresIn: "1h" }
         );
+
 
         return res.status(200).json({
           success: true,
