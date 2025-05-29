@@ -135,7 +135,12 @@ export default {
 
     const loadRecipe = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/pretragaRecepta");
+        const token = sessionStorage.getItem('authToken');  // uzmi token iz sessionStorage
+        const response = await axios.get("http://localhost:3000/api/pretragaRecepta", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         if (Array.isArray(response.data)) {
           recipe.value = response.data;
         } else {
