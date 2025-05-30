@@ -8,6 +8,7 @@ const app = express();
 const port = 3000;
 const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: "../.env" });
+const hashPassword = require("./utils/hashPassword");
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -162,7 +163,7 @@ app.post("/register", async (req, res) => {
 
     // Hash password and insert new user into the database
     try {
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await hashPassword(password);
       const insertQuery =
         "INSERT INTO KORISNIK (EmailKorisnika, Lozinka, KorisnickoIme, PreferencijeKorisnika) VALUES (?, ?, ?,?)";
 
