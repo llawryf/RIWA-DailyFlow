@@ -9,7 +9,9 @@ const port = 3000;
 const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: "../.env" });
 const hashPassword = require("./utils/hashPassword");
-const validateLoginInput = require("./utils/loginValidation");
+const loginValidation = require("./utils/loginValidation");
+const checkUser = require("./utils/checkUser");
+
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -144,23 +146,16 @@ app.post("/register", async (req, res) => {
       .status(400)
       .json({ success: false, message: "All fields are required." });
   }
-
-  // Check if user already exists in the database
-  const query = "SELECT * FROM KORISNIK WHERE EmailKorisnika = ?";
-  connection.query(query, [email], async (err, results) => {
-    if (err) {
-      console.error("Error during user query:", err); // Log the exact error
-      return res.status(500).json({
-        success: false,
-        message: "An error occurred while checking the user.",
-      });
+  try {
+    // Provjeri postoji li korisnik - koristi izdvojenu funkciju
+    const userExists = await checkUser(email, connection);
+    if (userExists) {
+      return res.status(400).json({ success: false, message: "Email already exists." });
     }
-
-    if (results.length > 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Email already exists." });
-    }
+  } catch (err) {
+    console.error("Error checking user existence:", err);
+    return res.status(500).json({ success: false, message: "Error checking user." });
+  }
 
     // Hash password and insert new user into the database
     try {
@@ -193,12 +188,11 @@ app.post("/register", async (req, res) => {
       });
     }
   });
-});
 
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
-  const validation = validateLoginInput({ username, password });
+  const validation = loginValidation({ username, password });
 
   if (!validation.isValid) {
     return res.status(400).json({

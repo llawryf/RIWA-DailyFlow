@@ -1,4 +1,4 @@
-function validateLoginInput({ username, password }) {
+function loginValidation({ username, password }) {
   if (!username || !password) {
     return {
       isValid: false,
@@ -7,4 +7,4 @@ function validateLoginInput({ username, password }) {
   }
   return { isValid: true };
 }
-module.exports = validateLoginInput;
+module.exports = loginValidation;
