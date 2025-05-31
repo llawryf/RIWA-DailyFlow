@@ -9,6 +9,7 @@ const port = 3000;
 const jwt = require("jsonwebtoken");
 require("dotenv").config({ path: "../.env" });
 const hashPassword = require("./utils/hashPassword");
+const validateLoginInput = require("./utils/loginValidation");
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -195,17 +196,16 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  console.log("Request body:", req.body);
   const { username, password } = req.body;
 
-  //Provjera ako su kor.ime i lozinka uneseni
-  if (!username || !password) {
+  const validation = validateLoginInput({ username, password });
+
+  if (!validation.isValid) {
     return res.status(400).json({
       success: false,
-      message: "Korisničko ime i lozinka su obavezni.",
+      message: validation.message,
     });
   }
-
   //Trazi prema kor.imenu
   const query = "SELECT * FROM KORISNIK WHERE KorisnickoIme = ?";
   connection.query(query, [username], (err, results) => {
