@@ -119,11 +119,11 @@ const linksList = [
 
 const leftDrawerOpen = ref(false);
 
-// Check if user is logged in
+// Provjera ako je korisnik ulogiran
 const isLoggedIn = ref(false);
 const username = ref("");
 
-// Fetch the username and token from sessionStorage
+// dohvat kor. imena i tokena iz sessiona
 watchEffect(() => {
   const token = sessionStorage.getItem("authToken");
   const storedUsername = sessionStorage.getItem("username");

@@ -66,7 +66,6 @@ export default {
     const email = ref('');
     const recipes = ref([]);
 
-    // Define columns as reactive
     const columns = [
   { name: "SifraRecepta", label: "ID", field: "SifraRecepta", align: "left", sortable: true },
   { name: "NazivRecepta", label: "Naziv", field: "NazivRecepta", align: "left" },

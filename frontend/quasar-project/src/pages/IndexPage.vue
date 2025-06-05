@@ -16,7 +16,7 @@
           label="Spremljeni recepti"
           to="/spremljeni_recepti"
         />
-        <!--<q-btn color="green" label="Izrada_recepta" to="/izrada_recepta" />-->
+        
         <q-btn
           color="green"
           label="Pretraga korisnika"

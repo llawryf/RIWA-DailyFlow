@@ -152,7 +152,6 @@ export default {
     };
 
     const filterRecipes = () => {
-      // intentionally left blank – handled reactively
     };
 
     onMounted(loadRecipe);

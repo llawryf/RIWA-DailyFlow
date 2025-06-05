@@ -113,7 +113,7 @@ app.get("/api/adminPetragaKorisnika/", (req, res) => {
 
 app.post("/IzradaRecepta", (req, res) => {
   const { recipeName, recipeDescription, recipeTags } = req.body;
-  // Provjera jesu li polja ispunjena
+  // Provjera ako su polja ispunjena
   if (!recipeName || !recipeDescription || !recipeTags) {
     return res.status(400).json({ error: "Sva polja su obavezna!" });
   }
@@ -140,7 +140,7 @@ app.post("/IzradaRecepta", (req, res) => {
 app.post("/register", async (req, res) => {
   const { korIme, email, password, prefKor } = req.body;
 
-  // Check if all required fields are present
+  // Provjera ako su polja ispunjena
   if (!korIme || !email || !password || !prefKor) {
     return res
       .status(400)
@@ -157,7 +157,7 @@ app.post("/register", async (req, res) => {
     return res.status(500).json({ success: false, message: "Error checking user." });
   }
 
-    // Hash password and insert new user into the database
+    // hashiranje lozinke i unos u bazu
     try {
       const hashedPassword = await hashPassword(password);
       const insertQuery =
@@ -168,7 +168,7 @@ app.post("/register", async (req, res) => {
         [email, hashedPassword, korIme, prefKor],
         (err, results) => {
           if (err) {
-            console.error("Error during user insertion:", err); // Log the exact error
+            console.error("Error during user insertion:", err);
             return res.status(500).json({
               success: false,
               message: "An error occurred while creating the user.",
@@ -181,7 +181,7 @@ app.post("/register", async (req, res) => {
         }
       );
     } catch (hashError) {
-      console.error("Error during password hashing:", hashError); // Log the hashing error
+      console.error("Error during password hashing:", hashError);
       return res.status(500).json({
         success: false,
         message: "An error occurred while hashing the password.",
@@ -295,29 +295,37 @@ app.delete("/api/DeleteUser/:email", (req, res) => {
   });
 });
 
-app.put("/api/updateUser/:id", (req, res) => {
+app.put("/api/updateUser/:id", async (req, res) => {
   const { id } = req.params;
   const { Lozinka, Mail, PreferencijeKorisnika } = req.body;
 
-  const query = `
+  try {
+    const hashedPassword = await hashPassword(Lozinka);
+
+    const query = `
       UPDATE KORISNIK
       SET Lozinka = ?, PreferencijeKorisnika = ?
       WHERE EmailKorisnika = ?`;
 
-  const values = [Lozinka, PreferencijeKorisnika, Mail];
+    const values = [hashedPassword, PreferencijeKorisnika, Mail];
 
-  connection.query(query, values, (error, results) => {
-    if (error) {
-      console.error("Error updating user:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-      return;
-    }
-    if (results.affectedRows === 0) {
-      res.status(404).json({ message: "Korisnik nije pronađen" });
-      return;
-    }
-    res.json({ message: "Podaci su uspješno ažurirani" });
-  });
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        console.error("Error updating user:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ message: "Korisnik nije pronađen" });
+      }
+
+      res.json({ message: "Podaci su uspješno ažurirani" });
+    });
+
+  } catch (error) {
+    console.error("Greška pri hashiranju lozinke:", error);
+    res.status(500).json({ error: "Neuspješno hashiranje lozinke" });
+  }
 });
 
 app.listen(port, () => {

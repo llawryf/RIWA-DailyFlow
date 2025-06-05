@@ -9,18 +9,11 @@
     </div>
     <q-form @submit="updateUser">
 
-      <!-- mail Input -->
+
       <q-input v-model="mail" label="Email" type="text" required />
-
-
-
-      <!-- Password Input -->
       <q-input v-model="password" label="Lozinka" type="password" required />
-
-      <!-- Preferences Input -->
       <q-input v-model="userPreferences" label="Preference" type="text" />
 
-      <!-- Submit Button -->
       <div style="margin-top: 1rem;">
         <q-btn label="Ažuriraj" color="primary" type="submit" />
       </div>
@@ -37,18 +30,13 @@ export default {
   name: 'UpdateUserPage',
 
   setup() {
-    // Reactive data for user input fields
 
     const mail = ref('');
     const password = ref('');
     const userPreferences = ref('');
 
-    // Method to handle the update
     const updateUser = async () => {
       try {
-        // Assuming userId is stored in session or you get it dynamically
-
-
         const response = await axios.put(`http://localhost:3000/api/updateUser/${mail.value}`, {
 
           Lozinka: password.value,
@@ -56,7 +44,6 @@ export default {
           PreferencijeKorisnika: userPreferences.value,
         });
 
-        // Handle successful update response
         console.log(response.data);
         alert('Podaci su uspješno ažurirani');
 

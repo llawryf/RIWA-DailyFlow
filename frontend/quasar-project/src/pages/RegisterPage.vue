@@ -87,7 +87,7 @@ export default {
   methods: {
     async submitRegistration() {
       const $q = useQuasar();
-      // Validate form fields
+      // Validacija
       if (
         this.user.firstName === "" ||
         this.user.lastName === "" ||
@@ -103,7 +103,7 @@ export default {
         return;
       }
 
-      // Check if passwords match
+      // provjera podudaranja lozinki
       if (this.user.password !== this.user.confirmPassword) {
         this.$q.notify({
           type: "negative",
@@ -111,8 +111,6 @@ export default {
         });
         return;
       }
-
-      // Prepare the registration data
       const registrationData = {
         korIme: `${this.user.firstName} ${this.user.lastName}`,
         email: this.user.email,
@@ -121,20 +119,17 @@ export default {
       };
 
       try {
-        // Send registration data to the backend API
         const response = await axios.post(
           "http://localhost:3000/register",
           registrationData
         );
 
-        // Check response and notify user
         if (response.data.success) {
           this.$q.notify({
             type: "positive",
             message: response.data.message,
           });
 
-          // Redirect to login page after successful registration
           this.$router.push("/login");
         } else {
           this.$q.notify({

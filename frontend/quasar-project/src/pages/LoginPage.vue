@@ -1,16 +1,16 @@
 <template>
   <q-page padding>
-    <!-- Toolbar for page title -->
+    
     <q-toolbar>
       <q-toolbar-title>Prijava</q-toolbar-title>
     </q-toolbar>
 
-    <!-- Instructions for the user -->
+    
     <div class="q-mb-md">
       <p>Molimo vas da unesete svoje korisničko ime i lozinku za prijavu.</p>
     </div>
 
-    <!-- Login Form -->
+    
     <q-form @submit="submitLogin">
       <div class="q-mb-md">
         <q-input
@@ -31,7 +31,7 @@
         />
       </div>
 
-      <!-- Submit button -->
+      
       <q-btn
         label="Potvrdi"
         color="primary"
@@ -40,7 +40,7 @@
       />
     </q-form>
 
-    <!-- Loading spinner indicator -->
+    <!-- ikona ucitavanja -->
     <div v-if="isLoading" class="q-mt-md" style="text-align: center">
       <q-spinner-dots size="50px" color="primary" />
     </div>
@@ -56,13 +56,12 @@ export default {
 
   data() {
     return {
-      // Object to store user input
+      // objekt u koji ce se spremati unosi
       loginData: {
         username: "",
         password: "",
       },
 
-      // State variable to track loading state
       isLoading: false,
     };
   },
@@ -109,7 +108,7 @@ export default {
             message: "Prijava uspješna!",
           });
 
-          // Dynamically update the username in MainLayout
+          // update korisnickog imena u main layoutu
           if (this.loginData.username === "Admin 1") {
             this.$router.push("/admin");
           } else {
