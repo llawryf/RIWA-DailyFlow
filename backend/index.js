@@ -91,51 +91,98 @@ app.get("/api/pretragaSpremljenihRecepta/:email", (req, res) => {
     });
   });
 */
-app.get("/api/PetragaKorisnika/", (req, res) => {
-  connection.query(
-    "SELECT KorisnickoIme, PreferencijeKorisnika FROM KORISNIK",
-    (error, results) => {
-      if (error) throw error;
-      res.send(results);
-    }
-  );
+const { verifyToken } = require("./auth");
+
+app.get("/api/PetragaKorisnika", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Nedostaje token za validaciju" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = verifyToken(token);
+
+    connection.query(
+      "SELECT KorisnickoIme, PreferencijeKorisnika FROM KORISNIK",
+      (error, results) => {
+        if (error) throw error;
+        res.send(results);
+      }
+    );
+  } catch (err) {
+    return res.status(401).json({ message: "Token je istekao ili ne valja" });
+  }
 });
+
 
 app.get("/api/adminPetragaKorisnika/", (req, res) => {
-  connection.query(
-    "SELECT KorisnickoIme, EmailKorisnika FROM KORISNIK",
-    (error, results) => {
-      if (error) throw error;
-      res.send(results);
-    }
-  );
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Nedostaje token za validaciju" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = verifyToken(token);
+
+    connection.query(
+      "SELECT KorisnickoIme, EmailKorisnika FROM KORISNIK",
+      (error, results) => {
+        if (error) throw error;
+        res.send(results);
+      }
+    );
+  } catch (err) {
+    return res.status(401).json({ message: "Token je istekao ili ne valja" });
+  }
 });
 
+
 app.post("/IzradaRecepta", (req, res) => {
-  const { recipeName, recipeDescription, recipeTags } = req.body;
-  // Provjera ako su polja ispunjena
-  if (!recipeName || !recipeDescription || !recipeTags) {
-    return res.status(400).json({ error: "Sva polja su obavezna!" });
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Nedostaje token za validaciju" });
   }
-  // SQL upit za unos podataka
-  const query =
-    "INSERT INTO Recipe (recipeName, recipeDescription, recipeTags) VALUES (?, ?, ?)";
-  const values = [recipeName, recipeDescription, recipeTags];
-  // Izvršavanje upita
-  connection.query(query, values, (error, results) => {
-    if (error) {
-      console.error("Greška prilikom unosa u bazu:", error);
-      return res
-        .status(500)
-        .json({ error: "Došlo je do pogreške prilikom unosa u bazu." });
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = verifyToken(token);
+
+    const { recipeName, recipeDescription, recipeTags } = req.body;
+    // Provjera ako su polja ispunjena
+    if (!recipeName || !recipeDescription || !recipeTags) {
+      return res.status(400).json({ error: "Sva su polja obavezna" });
     }
-    // Uspješan odgovor
-    res.status(201).json({
-      message: "Recept uspješno unesen!",
-      data: { id: results.insertId, recipeName, recipeDescription, recipeTags },
+    // SQL upit za unos podataka
+    const query =
+      "INSERT INTO Recipe (recipeName, recipeDescription, recipeTags) VALUES (?, ?, ?)";
+    const values = [recipeName, recipeDescription, recipeTags];
+    // Izvršavanje upita
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        console.error("Greška prilikom unosa u bazu:", error);
+        return res
+          .status(500)
+          .json({ error: "Došlo je do pogreške prilikom unosa u bazu." });
+      }
+      // Uspješan odgovor
+      res.status(201).json({
+        message: "Recept uspješno unesen!",
+        data: { id: results.insertId, recipeName, recipeDescription, recipeTags },
+      });
     });
-  });
+  } catch (err) {
+    return res.status(401).json({ message: "Token je istekao ili ne valja" });
+  }
 });
+
 
 app.post("/register", async (req, res) => {
   const { korIme, email, password, prefKor } = req.body;
@@ -230,7 +277,7 @@ app.post("/login", (req, res) => {
 
       // Ako se lozinke podudaraju + jwt autentikacija:
       if (isMatch) {
-        const { jwtSecrets } = require("../secret");
+        const { jwtSecrets } = require("./secret");
 
         const token = jwt.sign(
           { username: user.KorisnickoIme },
@@ -255,78 +302,124 @@ app.post("/login", (req, res) => {
 });
 
 app.delete("/api/DeleteRecipe/:id", async (req, res) => {
-  const { id } = req.params; // dohvat id-a iz poziva
-  const query = "DELETE FROM Recept WHERE SifraRecepta = ?";
-  connection.query(query, [id], (error, results) => {
-    if (error) {
-      console.error("Error deleting recipe:", error);
-      return res
-        .status(500)
-        .json({ error: "An error occurred while deleting the recipe." });
-    }
+  const authHeader = req.headers.authorization;
 
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ message: "Recipe not found." });
-    }
+  if (!authHeader) {
+    return res.status(401).json({ message: "Nedostaje token za validaciju" });
+  }
 
-    res.status(200).json({ message: "Recipe deleted successfully." });
-  });
-});
-
-app.delete("/api/DeleteUser/:email", (req, res) => {
-  const { email } = req.params;
-
-  // SQL upit za brisanje korisnika
-  const query = "DELETE FROM KORISNIK WHERE EmailKorisnika = ?";
-
-  connection.query(query, [email], (error, results) => {
-    if (error) {
-      console.error("Error deleting user:", error);
-      return res
-        .status(500)
-        .json({ error: "An error occurred while deleting the user." });
-    }
-
-    if (results.affectedRows === 0) {
-      return res.status(404).json({ message: "User not found." });
-    }
-
-    res.status(200).json({ message: "User deleted successfully." });
-  });
-});
-
-app.put("/api/updateUser/:id", async (req, res) => {
-  const { id } = req.params;
-  const { Lozinka, Mail, PreferencijeKorisnika } = req.body;
+  const token = authHeader.split(" ")[1];
 
   try {
-    const hashedPassword = await hashPassword(Lozinka);
+    const decoded = verifyToken(token);
 
-    const query = `
-      UPDATE KORISNIK
-      SET Lozinka = ?, PreferencijeKorisnika = ?
-      WHERE EmailKorisnika = ?`;
-
-    const values = [hashedPassword, PreferencijeKorisnika, Mail];
-
-    connection.query(query, values, (error, results) => {
+    const { id } = req.params; // dohvat id-a iz poziva
+    const query = "DELETE FROM Recept WHERE SifraRecepta = ?";
+    connection.query(query, [id], (error, results) => {
       if (error) {
-        console.error("Error updating user:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        console.error("Error deleting recipe:", error);
+        return res
+          .status(500)
+          .json({ error: "An error occurred while deleting the recipe." });
       }
 
       if (results.affectedRows === 0) {
-        return res.status(404).json({ message: "Korisnik nije pronađen" });
+        return res.status(404).json({ message: "Recipe not found." });
       }
 
-      res.json({ message: "Podaci su uspješno ažurirani" });
+      res.status(200).json({ message: "Recipe deleted successfully." });
     });
-
-  } catch (error) {
-    console.error("Greška pri hashiranju lozinke:", error);
-    res.status(500).json({ error: "Neuspješno hashiranje lozinke" });
+  } catch (err) {
+    return res.status(401).json({ message: "Token je istekao ili ne valja" });
   }
 });
+
+
+app.delete("/api/DeleteUser/:email", (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Nedostaje token za validaciju" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = verifyToken(token);
+
+    const { email } = req.params;
+
+    // SQL upit za brisanje korisnika
+    const query = "DELETE FROM KORISNIK WHERE EmailKorisnika = ?";
+
+    connection.query(query, [email], (error, results) => {
+      if (error) {
+        console.error("Error deleting user:", error);
+        return res
+          .status(500)
+          .json({ error: "Greska pri ucitavanju korisnika" });
+      }
+
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ message: "Korisnik ne postoji" });
+      }
+
+      res.status(200).json({ message: "Korisnik uspjesno izbrisan" });
+    });
+  } catch (err) {
+    return res.status(401).json({ message: "Token je istekao ili ne valja" });
+  }
+});
+
+
+app.put("/api/updateUser/:id", async (req, res) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Nedostaje token za validaciju" });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = verifyToken(token);
+
+    const { id } = req.params;
+    const { Lozinka, Mail, PreferencijeKorisnika } = req.body;
+
+    try {
+      const hashedPassword = await hashPassword(Lozinka);
+
+      const query = `
+        UPDATE KORISNIK
+        SET Lozinka = ?, PreferencijeKorisnika = ?
+        WHERE EmailKorisnika = ?`;
+
+      const values = [hashedPassword, PreferencijeKorisnika, Mail];
+
+      connection.query(query, values, (error, results) => {
+        if (error) {
+          console.error("Error updating user:", error);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+
+        if (results.affectedRows === 0) {
+          return res.status(404).json({ message: "Korisnik nije pronađen" });
+        }
+
+        res.json({ message: "Podaci su uspješno ažurirani" });
+      });
+
+    } catch (error) {
+      console.error("Greška pri hashiranju lozinke:", error);
+      res.status(500).json({ error: "Neuspješno hashiranje lozinke" });
+    }
+
+  } catch (err) {
+    return res.status(401).json({ message: "Token je istekao ili ne valja" });
+  }
+});
+
 
 app.listen(port, () => {
   console.log("Server running at port: " + port);

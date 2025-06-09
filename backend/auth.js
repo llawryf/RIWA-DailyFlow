@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { jwtSecrets } = require("./secrets");
+const { jwtSecrets } = require("./secret");
 
 function verifyToken(token) {
   for (const secret of jwtSecrets) {
