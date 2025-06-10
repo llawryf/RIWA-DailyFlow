@@ -35,16 +35,18 @@ connection.connect(function (err) {
 
 app.get("/api/pretragaRecepta", (req, res) => {
   const query = `
-      SELECT
-        Recept.SifraRecepta,
-        Recept.NazivRecepta,
-        Recept.OznakeRecepta,
-        Recept.OcjenaRecepta,
-        GROUP_CONCAT(CONCAT(Sastojak.NazivSastojka, ' (', SastojakUReceptu.KolicinaSastojka, ')') SEPARATOR ', ') AS Sastojci
-      FROM Recept
-      LEFT JOIN SastojakUReceptu ON Recept.SifraRecepta = SastojakUReceptu.SifraRecepta
-      LEFT JOIN Sastojak ON Sastojak.SifraSastojka = SastojakUReceptu.SifraSastojka
-      GROUP BY Recept.SifraRecepta, Recept.NazivRecepta, Recept.OznakeRecepta, Recept.OcjenaRecepta
+    SELECT
+      Recept.SifraRecepta,
+      Recept.NazivRecepta,
+      Recept.EmailKorisnika,
+      Recept.OpisRecepta,
+      Recept.OznakeRecepta,
+      Recept.OcjenaRecepta,
+      GROUP_CONCAT(CONCAT(Sastojak.NazivSastojka, ' (', SastojakUReceptu.KolicinaSastojka, ')') SEPARATOR ', ') AS Sastojci
+    FROM Recept
+    LEFT JOIN SastojakUReceptu ON Recept.SifraRecepta = SastojakUReceptu.SifraRecepta
+    LEFT JOIN Sastojak ON Sastojak.SifraSastojka = SastojakUReceptu.SifraSastojka
+    GROUP BY Recept.SifraRecepta, Recept.NazivRecepta, Recept.EmailKorisnika, Recept.OpisRecepta, Recept.OznakeRecepta, Recept.OcjenaRecepta
     `;
 
   connection.query(query, (error, results) => {
@@ -52,6 +54,68 @@ app.get("/api/pretragaRecepta", (req, res) => {
     res.send(results);
   });
 });
+
+app.get("/api/komentari/:sifraRecepta", (req, res) => {
+  const { sifraRecepta } = req.params;
+  const query = `
+    SELECT EmailKorisnika, SadrzajKomentara, OcjenaKomentara
+    FROM Komentar
+    WHERE SifraRecepta = ?`;
+
+  connection.query(query, [sifraRecepta], (error, results) => {
+    if (error) {
+      console.error("Error fetching comments:", error);
+      return res.status(500).json({ error: "Database error" });
+    }
+    res.json(results);
+  });
+});
+
+app.post("/api/komentari/:recipeId", (req, res) => {
+  const { recipeId } = req.params;
+  const { username, sadrzajKomentara, ocjenaKomentara } = req.body;
+
+
+
+  if (!username || !sadrzajKomentara || !ocjenaKomentara) {
+    return res.status(400).json({ message: "Nedostaju podaci za komentar" });
+  }
+
+  const getEmailQuery = `
+    SELECT EmailKorisnika FROM KORISNIK WHERE KorisnickoIme = ?`;
+
+  connection.query(getEmailQuery, [username], (err, results) => {
+    if (err) {
+      console.error("Greška pri traženju emaila:", err);
+      return res.status(500).json({ message: "Greška na serveru" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Korisnik nije pronađen" });
+    }
+
+    const emailKorisnika = results[0].EmailKorisnika;
+
+    const insertQuery = `
+      INSERT INTO Komentar (EmailKorisnika, SifraRecepta, SadrzajKomentara, OcjenaKomentara)
+      VALUES (?, ?, ?, ?)`;
+
+    connection.query(
+      insertQuery,
+      [emailKorisnika, recipeId, sadrzajKomentara, ocjenaKomentara],
+      (error, insertResults) => {
+        if (error) {
+          console.error("Greška pri unosu komentara:", error);
+          return res.status(500).json({ message: "Greška na serveru" });
+        }
+
+        res.status(201).json({ message: "Komentar uspješno dodat" });
+      }
+    );
+  });
+});
+
+
 
 app.get("/api/pretragaSpremljenihRecepta/:email", (req, res) => {
   const { email } = req.params;
