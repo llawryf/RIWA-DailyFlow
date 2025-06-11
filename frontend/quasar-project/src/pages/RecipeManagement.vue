@@ -100,10 +100,9 @@ export default {
   setup() {
     const filteredRecipes = computed(() => {
       if (!PretragaRecepta.value.trim()) return Recipes.value;
-      const filtered = Recipes.value.filter((recipe) =>
+      return Recipes.value.filter((recipe) =>
         recipe.NazivRecepta?.toLowerCase().includes(PretragaRecepta.value.toLowerCase())
       );
-      return filtered;
     });
 
     const loadRecipes = async () => {
@@ -122,16 +121,17 @@ export default {
     const deleteRecipe = async (id) => {
       try {
         const response = await axios.delete(`http://localhost:3000/api/DeleteRecipe/${id}`);
-        
         if (response.status === 200) {
-          // Ažuriraj listu Recepta nakon brisanja
           Recipes.value = Recipes.value.filter(recipe => recipe.SifraRecepta !== id);
           console.log(`Recipe with id ${id} deleted successfully.`);
         } else {
           console.error('Error deleting Recipe:', response);
         }
       } catch (error) {
-        console.error('Error deleting Recipe:', error);
+        console.error('Greška prilikom brisanja recepta:', error);
+        alert(
+          error.response?.data?.message || 'Došlo je do pogreške prilikom brisanja recepta.'
+        );
       }
     };
 

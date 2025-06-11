@@ -173,28 +173,18 @@ app.get("/api/PetragaKorisnika", (req, res) => {
 
 
 app.get("/api/adminPetragaKorisnika/", (req, res) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    return res.status(401).json({ message: "Nedostaje token za validaciju" });
-  }
-
-  const token = authHeader.split(" ")[1];
-
-  try {
-    const decoded = verifyToken(token);
-
-    connection.query(
-      "SELECT KorisnickoIme, EmailKorisnika FROM KORISNIK",
-      (error, results) => {
-        if (error) throw error;
-        res.send(results);
+  connection.query(
+    "SELECT KorisnickoIme, EmailKorisnika FROM KORISNIK",
+    (error, results) => {
+      if (error) {
+        console.error("Greška pri dohvatu korisnika:", error);
+        return res.status(500).json({ message: "Greška na serveru" });
       }
-    );
-  } catch (err) {
-    return res.status(401).json({ message: "Token je istekao ili ne valja" });
-  }
+      res.send(results);
+    }
+  );
 });
+
 
 
 app.post("/IzradaRecepta", (req, res) => {
@@ -355,124 +345,83 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.delete("/api/DeleteRecipe/:id", async (req, res) => {
-  const authHeader = req.headers.authorization;
+app.delete("/api/DeleteRecipe/:id", (req, res) => {
+  const { id } = req.params; // dohvat id-a iz poziva
+  const query = "DELETE FROM Recept WHERE SifraRecepta = ?";
 
-  if (!authHeader) {
-    return res.status(401).json({ message: "Nedostaje token za validaciju" });
-  }
+  connection.query(query, [id], (error, results) => {
+    if (error) {
+      console.error("Error deleting recipe:", error);
+      return res
+        .status(500)
+        .json({ error: "An error occurred while deleting the recipe." });
+    }
 
-  const token = authHeader.split(" ")[1];
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Recipe not found." });
+    }
 
-  try {
-    const decoded = verifyToken(token);
-
-    const { id } = req.params; // dohvat id-a iz poziva
-    const query = "DELETE FROM Recept WHERE SifraRecepta = ?";
-    connection.query(query, [id], (error, results) => {
-      if (error) {
-        console.error("Error deleting recipe:", error);
-        return res
-          .status(500)
-          .json({ error: "An error occurred while deleting the recipe." });
-      }
-
-      if (results.affectedRows === 0) {
-        return res.status(404).json({ message: "Recipe not found." });
-      }
-
-      res.status(200).json({ message: "Recipe deleted successfully." });
-    });
-  } catch (err) {
-    return res.status(401).json({ message: "Token je istekao ili ne valja" });
-  }
+    res.status(200).json({ message: "Recipe deleted successfully." });
+  });
 });
+
 
 
 app.delete("/api/DeleteUser/:email", (req, res) => {
-  const authHeader = req.headers.authorization;
+  const { email } = req.params;
 
-  if (!authHeader) {
-    return res.status(401).json({ message: "Nedostaje token za validaciju" });
-  }
+  // SQL upit za brisanje korisnika
+  const query = "DELETE FROM KORISNIK WHERE EmailKorisnika = ?";
 
-  const token = authHeader.split(" ")[1];
+  connection.query(query, [email], (error, results) => {
+    if (error) {
+      console.error("Error deleting user:", error);
+      return res.status(500).json({ error: "Greška pri brisanju korisnika" });
+    }
 
-  try {
-    const decoded = verifyToken(token);
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: "Korisnik ne postoji" });
+    }
 
-    const { email } = req.params;
-
-    // SQL upit za brisanje korisnika
-    const query = "DELETE FROM KORISNIK WHERE EmailKorisnika = ?";
-
-    connection.query(query, [email], (error, results) => {
-      if (error) {
-        console.error("Error deleting user:", error);
-        return res
-          .status(500)
-          .json({ error: "Greska pri ucitavanju korisnika" });
-      }
-
-      if (results.affectedRows === 0) {
-        return res.status(404).json({ message: "Korisnik ne postoji" });
-      }
-
-      res.status(200).json({ message: "Korisnik uspjesno izbrisan" });
-    });
-  } catch (err) {
-    return res.status(401).json({ message: "Token je istekao ili ne valja" });
-  }
+    res.status(200).json({ message: "Korisnik uspješno izbrisan" });
+  });
 });
+
 
 
 app.put("/api/updateUser/:id", async (req, res) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    return res.status(401).json({ message: "Nedostaje token za validaciju" });
-  }
-
-  const token = authHeader.split(" ")[1];
+  const { id } = req.params;
+  const { Lozinka, Mail, PreferencijeKorisnika } = req.body;
 
   try {
-    const decoded = verifyToken(token);
+    const hashedPassword = await hashPassword(Lozinka);
 
-    const { id } = req.params;
-    const { Lozinka, Mail, PreferencijeKorisnika } = req.body;
+    const query = `
+      UPDATE KORISNIK
+      SET Lozinka = ?, PreferencijeKorisnika = ?
+      WHERE EmailKorisnika = ?`;
 
-    try {
-      const hashedPassword = await hashPassword(Lozinka);
+    const values = [hashedPassword, PreferencijeKorisnika, Mail];
 
-      const query = `
-        UPDATE KORISNIK
-        SET Lozinka = ?, PreferencijeKorisnika = ?
-        WHERE EmailKorisnika = ?`;
+    connection.query(query, values, (error, results) => {
+      if (error) {
+        console.error("Error updating user:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
 
-      const values = [hashedPassword, PreferencijeKorisnika, Mail];
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ message: "Korisnik nije pronađen" });
+      }
 
-      connection.query(query, values, (error, results) => {
-        if (error) {
-          console.error("Error updating user:", error);
-          return res.status(500).json({ error: "Internal Server Error" });
-        }
+      res.json({ message: "Podaci su uspješno ažurirani" });
+    });
 
-        if (results.affectedRows === 0) {
-          return res.status(404).json({ message: "Korisnik nije pronađen" });
-        }
-
-        res.json({ message: "Podaci su uspješno ažurirani" });
-      });
-
-    } catch (error) {
-      console.error("Greška pri hashiranju lozinke:", error);
-      res.status(500).json({ error: "Neuspješno hashiranje lozinke" });
-    }
-
-  } catch (err) {
-    return res.status(401).json({ message: "Token je istekao ili ne valja" });
+  } catch (error) {
+    console.error("Greška pri hashiranju lozinke:", error);
+    res.status(500).json({ error: "Neuspješno hashiranje lozinke" });
   }
 });
+
 
 
 app.listen(port, () => {
