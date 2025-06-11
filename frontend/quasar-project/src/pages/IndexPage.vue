@@ -47,7 +47,7 @@ defineOptions({
 
 <style scoped>
 .slikaPozadine {
-  background-image: url("https://media.istockphoto.com/id/927407442/photo/mixed-spices-and-herbs-on-black-stone-table-top-view-ingredients-for-cooking-food-background.jpg?s=612x612&w=0&k=20&c=g_LiF_ctTW-M5VVsO6gitAtjusnglUJZcWBD-nN-BGg=");
+  background-image: url("../pozadinskaSlika2.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

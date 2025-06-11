@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: lightgreen">
+  <div style="background-color: #90ee90">
     <q-page padding>
       <div class="q-mb-md text-center">
         <h4>Pretraga recepta</h4>

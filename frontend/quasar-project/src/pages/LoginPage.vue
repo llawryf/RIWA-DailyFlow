@@ -1,4 +1,5 @@
 <template>
+  <div style="background-color: #90ee90;">
   <q-page padding>
     
     <q-toolbar>
@@ -15,6 +16,7 @@
       <div class="q-mb-md">
         <q-input
           v-model="loginData.username"
+          style="background-color: white"
           label="Korisničko ime"
           outlined
           required
@@ -24,6 +26,7 @@
       <div class="q-mb-md">
         <q-input
           v-model="loginData.password"
+          style="background-color: white"
           label="Lozinka"
           outlined
           type="password"
@@ -45,6 +48,7 @@
       <q-spinner-dots size="50px" color="primary" />
     </div>
   </q-page>
+  </div>
 </template>
 
 <script>

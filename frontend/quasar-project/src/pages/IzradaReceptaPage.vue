@@ -1,20 +1,24 @@
 <template>
+  <div style="background-color: #90ee90;">
   <q-page padding>
     <!-- Ako JE ulogiran -->
     <div v-if="isLoggedIn">
       <q-input
+      style="background-color: white"
         v-model="recipeName"
         label="Naziv recepta"
         filled
         class="q-mb-md"
       />
       <q-input
+      style="background-color: white"
         v-model="recipeTags"
         label="Tagovi recepta"
         filled
         class="q-mb-md"
       />
       <q-input
+      style="background-color: white"
         v-model="recipeDescription"
         label="Opis recepta"
         filled
@@ -39,6 +43,7 @@
       />
     </div>
   </q-page>
+  </div>
 </template>
 
 <script>

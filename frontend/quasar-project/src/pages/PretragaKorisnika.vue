@@ -1,7 +1,9 @@
 <template>
+  <div style="background-color: #90ee90;">
   <q-page padding>
     <div class="q-pa-md">
       <q-input
+      style="background-color: white"
         outlined
         v-model="PretragaKorisnika"
         label="Pretraži Korisnike"
@@ -48,6 +50,7 @@
       </q-table>
     </div>
   </q-page>
+</div>
 </template>
 
 <script>

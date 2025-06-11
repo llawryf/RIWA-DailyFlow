@@ -1,4 +1,5 @@
 <template>
+  <div style="background-color: #90ee90;">
   <q-page padding>
     <q-toolbar>
       <q-toolbar-title>Registracija korisnika</q-toolbar-title>
@@ -13,15 +14,16 @@
 
     <q-form @submit="submitRegistration" ref="registrationForm">
       <div class="q-mb-md">
-        <q-input v-model="user.firstName" label="Ime" outlined required />
+        <q-input v-model="user.firstName" label="Ime" outlined required style="background-color: white" />
       </div>
 
       <div class="q-mb-md">
-        <q-input v-model="user.lastName" label="Prezime" outlined required />
+        <q-input v-model="user.lastName" label="Prezime" outlined required style="background-color: white" />
       </div>
 
       <div class="q-mb-md">
         <q-input
+        style="background-color: white"
           v-model="user.email"
           label="Email"
           outlined
@@ -32,6 +34,7 @@
 
       <div class="q-mb-md">
         <q-input
+        style="background-color: white"
           v-model="user.password"
           label="Lozinka"
           outlined
@@ -42,6 +45,7 @@
 
       <div class="q-mb-md">
         <q-input
+        style="background-color: white"
           v-model="user.confirmPassword"
           label="Potvrdite lozinku"
           outlined
@@ -52,6 +56,7 @@
 
       <div class="q-mb-md">
         <q-input
+        style="background-color: white"
           v-model="user.PrefUser"
           label="Preferencije"
           outlined
@@ -62,6 +67,7 @@
       <q-btn label="Potvrdi" color="primary" type="submit" />
     </q-form>
   </q-page>
+  </div>
 </template>
 
 <script>
