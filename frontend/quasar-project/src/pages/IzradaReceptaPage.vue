@@ -47,22 +47,17 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      // Provjera ako je korisnik ulogiran / ako postoji session
       isLoggedIn: !!sessionStorage.getItem('authToken'),
-      // Podaci o receptu
       recipeName: '',
       recipeTags: '',
       recipeDescription: ''
     };
   },
   methods: {
-    // Ridirekcija na prijavu ako nije prijavljen
     redirectToLogin() {
       this.$router.push('/login');
     },
-    // Logika za izradu recepta
     async createRecipe() {
-      // Priprema podataka za slanje
       const recipeData = {
         recipeName: this.recipeName,
         recipeTags: this.recipeTags,
@@ -70,14 +65,25 @@ export default {
       };
 
       try {
-        // Slanje POST zahtjeva prema API-ju koristeći Axios
-        const response = await axios.post('http://localhost:3000/IzradaRecepta', recipeData);
+        const token = sessionStorage.getItem('authToken');
 
+        if (!token) {
+          alert("Nedostaje token. Prijavite se ponovno.");
+          return;
+        }
 
-        // Odgovor servera
+        const response = await axios.post(
+          'http://localhost:3000/IzradaRecepta',
+          recipeData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
         console.log('Odgovor servera:', response.data);
 
-        // Resetiranje polja nakon uspjeha
         this.recipeName = '';
         this.recipeTags = '';
         this.recipeDescription = '';
@@ -85,13 +91,10 @@ export default {
         alert('Recept je uspješno kreiran!');
       } catch (error) {
         console.error('Greška prilikom stvaranja recepta:', error);
-
-        // Provjera greške i obavještavanje korisnika
         alert(
-    error.response?.data?.error || 'Došlo je do greške prilikom stvaranja recepta.'
-);
-console.error('Greška prilikom stvaranja recepta:', error);
-
+          error.response?.data?.error ||
+          'Došlo je do greške prilikom stvaranja recepta.'
+        );
       }
     }
   }
