@@ -158,28 +158,18 @@ app.get("/api/pretragaSpremljenihRecepta/:email", (req, res) => {
 const { verifyToken } = require("./auth");
 
 app.get("/api/PetragaKorisnika", (req, res) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    return res.status(401).json({ message: "Nedostaje token za validaciju" });
-  }
-
-  const token = authHeader.split(" ")[1];
-
-  try {
-    const decoded = verifyToken(token);
-
-    connection.query(
-      "SELECT KorisnickoIme, PreferencijeKorisnika FROM KORISNIK",
-      (error, results) => {
-        if (error) throw error;
-        res.send(results);
+  connection.query(
+    "SELECT KorisnickoIme, PreferencijeKorisnika FROM KORISNIK",
+    (error, results) => {
+      if (error) {
+        console.error('Greška u upitu:', error);
+        return res.status(500).json({ message: 'Greška u dohvaćanju korisnika' });
       }
-    );
-  } catch (err) {
-    return res.status(401).json({ message: "Token je istekao ili ne valja" });
-  }
+      res.send(results);
+    }
+  );
 });
+
 
 
 app.get("/api/adminPetragaKorisnika/", (req, res) => {
