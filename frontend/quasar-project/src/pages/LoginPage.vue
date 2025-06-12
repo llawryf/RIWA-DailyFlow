@@ -1,54 +1,53 @@
 <template>
-  <div style="background-color: #90ee90;">
-  <q-page padding>
-    
-    <q-toolbar>
-      <q-toolbar-title>Prijava</q-toolbar-title>
-    </q-toolbar>
+  <!-- pozadinska boja + centriranje -->
+  <q-page class="flex flex-center" style="background-color:#90ee90; min-height:100vh;">
+    <q-card flat bordered class="q-pa-lg" style="max-width:420px; width:90%;">
+      <q-toolbar class="q-mb-md">
+        <q-toolbar-title class="text-h6 text-center full-width">Prijava</q-toolbar-title>
+      </q-toolbar>
 
-    
-    <div class="q-mb-md">
-      <p>Molimo vas da unesete svoje korisničko ime i lozinku za prijavu.</p>
-    </div>
-
-    
-    <q-form @submit="submitLogin">
-      <div class="q-mb-md">
-        <q-input
-          v-model="loginData.username"
-          style="background-color: white"
-          label="Korisničko ime"
-          outlined
-          required
-        />
+      <!-- opisni tekst (ostaje) -->
+      <div class="text-body2 q-mb-md">
       </div>
 
-      <div class="q-mb-md">
-        <q-input
-          v-model="loginData.password"
-          style="background-color: white"
-          label="Lozinka"
-          outlined
-          type="password"
-          required
+      <!-- forma -->
+      <q-form @submit="submitLogin">
+        <div class="q-mb-md">
+          <q-input
+            v-model="loginData.username"
+            style="background-color:white"
+            label="Korisničko ime"
+            outlined
+            required
+          />
+        </div>
+
+        <div class="q-mb-md">
+          <q-input
+            v-model="loginData.password"
+            style="background-color:white"
+            label="Lozinka"
+            outlined
+            type="password"
+            required
+          />
+        </div>
+
+        <q-btn
+          label="Potvrdi"
+          color="primary"
+          type="submit"
+          :loading="isLoading"
+          class="full-width"
         />
+      </q-form>
+
+      <!-- ikona ucitavanja -->
+      <div v-if="isLoading" class="q-mt-md text-center">
+        <q-spinner-dots size="50px" color="primary" />
       </div>
-
-      
-      <q-btn
-        label="Potvrdi"
-        color="primary"
-        type="submit"
-        :loading="isLoading"
-      />
-    </q-form>
-
-    <!-- ikona ucitavanja -->
-    <div v-if="isLoading" class="q-mt-md" style="text-align: center">
-      <q-spinner-dots size="50px" color="primary" />
-    </div>
+    </q-card>
   </q-page>
-  </div>
 </template>
 
 <script>
