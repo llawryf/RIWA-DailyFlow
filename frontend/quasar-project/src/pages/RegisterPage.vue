@@ -1,73 +1,30 @@
 <template>
-  <div style="background-color: #90ee90;">
-  <q-page padding>
-    <q-toolbar>
-      <q-toolbar-title>Registracija korisnika</q-toolbar-title>
-    </q-toolbar>
+  <q-page class="flex flex-center" style="background-color:#90ee90; min-height:100vh;">
+    <q-card flat bordered class="q-pa-lg" style="max-width:420px; width:90%;">
+      <q-toolbar class="q-mb-md">
+        <q-toolbar-title class="text-h6 text-center full-width">Registracija korisnika</q-toolbar-title>
+      </q-toolbar>
 
-    <div class="q-mb-md">
-      <p>
-        Popunite polja za registraciju kako biste postali član naše platforme.
-      </p>
-      <p>Vaše ime i prezime će biti korisničko ime za ulaz u aplikaciju.</p>
-    </div>
-
-    <q-form @submit="submitRegistration" ref="registrationForm">
-      <div class="q-mb-md">
-        <q-input v-model="user.firstName" label="Ime" outlined required style="background-color: white" />
+      <div class="text-body2 q-mb-md">
       </div>
 
-      <div class="q-mb-md">
-        <q-input v-model="user.lastName" label="Prezime" outlined required style="background-color: white" />
-      </div>
+      <q-form @submit="submitRegistration" ref="registrationForm" class="column q-gutter-md">
+        <q-input v-model="user.firstName" label="Ime" outlined required style="background-color:white" />
 
-      <div class="q-mb-md">
-        <q-input
-        style="background-color: white"
-          v-model="user.email"
-          label="Email"
-          outlined
-          type="email"
-          required
-        />
-      </div>
+        <q-input v-model="user.lastName" label="Prezime" outlined required style="background-color:white" />
 
-      <div class="q-mb-md">
-        <q-input
-        style="background-color: white"
-          v-model="user.password"
-          label="Lozinka"
-          outlined
-          type="password"
-          required
-        />
-      </div>
+        <q-input v-model="user.email" label="Email" outlined type="email" required style="background-color:white" />
 
-      <div class="q-mb-md">
-        <q-input
-        style="background-color: white"
-          v-model="user.confirmPassword"
-          label="Potvrdite lozinku"
-          outlined
-          type="password"
-          required
-        />
-      </div>
+        <q-input v-model="user.password" label="Lozinka" outlined type="password" required style="background-color:white" />
 
-      <div class="q-mb-md">
-        <q-input
-        style="background-color: white"
-          v-model="user.PrefUser"
-          label="Preferencije"
-          outlined
-          required
-        />
-      </div>
+        <q-input v-model="user.confirmPassword" label="Potvrdite lozinku" outlined type="password" required style="background-color:white" />
 
-      <q-btn label="Potvrdi" color="primary" type="submit" />
-    </q-form>
+        <q-input v-model="user.PrefUser" label="Preferencije" outlined required style="background-color:white" />
+
+        <q-btn label="Potvrdi" color="primary" type="submit" class="full-width" />
+      </q-form>
+    </q-card>
   </q-page>
-  </div>
 </template>
 
 <script>
