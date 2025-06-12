@@ -114,7 +114,7 @@ const filteredUsers = computed(() => {
   )
 })
 
-// dohvat podataka + dodaj "sent" flag (noob način)
+// dohvat
 onMounted(async () => {
   try {
     const { data } = await axios.get('http://localhost:3000/api/PetragaKorisnika/')
