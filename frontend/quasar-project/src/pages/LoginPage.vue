@@ -1,16 +1,14 @@
 <template>
-  <!-- pozadinska boja + centriranje -->
   <q-page class="flex flex-center" style="background-color:#90ee90; min-height:100vh;">
     <q-card flat bordered class="q-pa-lg" style="max-width:420px; width:90%;">
       <q-toolbar class="q-mb-md">
         <q-toolbar-title class="text-h6 text-center full-width">Prijava</q-toolbar-title>
       </q-toolbar>
 
-      <!-- opisni tekst (ostaje) -->
       <div class="text-body2 q-mb-md">
       </div>
 
-      <!-- forma -->
+
       <q-form @submit="submitLogin">
         <div class="q-mb-md">
           <q-input
